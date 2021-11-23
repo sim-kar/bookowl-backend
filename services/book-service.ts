@@ -7,7 +7,7 @@ export default class BookService {
   private books: Array<Book>;
 
   constructor() {
-    this.file = '../test-db.json';
+    this.file = './test-db.json';
     this.books = data.books;
   }
 
@@ -40,6 +40,6 @@ export default class BookService {
       return { statusCode: 500, message: { error: 'Unable to add book.' } };
     }
 
-    return { statusCode: 409, message: { message: 'Added book.' } };
+    return { statusCode: 201, message: { message: 'Added book.' } };
   }
 }

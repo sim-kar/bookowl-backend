@@ -1,14 +1,20 @@
 import fs from 'fs/promises';
 import data from '../test-db.json';
 import Review from './Review';
+import Book from './Book';
+import User from './User';
 
 export default class ReviewService {
   private file: string;
   private reviews: Array<Review>;
+  private books: Array<Book>;
+  private users: Array<User>;
 
   constructor() {
-    this.file = '../test-db.json';
+    this.file = './test-db.json';
     this.reviews = data.reviews;
+    this.books = data.books;
+    this.users = data.users;
   }
 
   // get all reviews
@@ -37,13 +43,19 @@ export default class ReviewService {
       return { statusCode: 409, message: { error: 'Review already exists.' } };
     }
 
+    // make sure isbn and username actually exist in db
+    if (!this.books.some((book) => book.isbn === isbn)
+        || !this.users.some((user) => user.username === username)) {
+      return { statusCode: 404, message: { error: "Book or user doesn't exist." } };
+    }
+
     const date = new Date();
     const review = {
       isbn,
       username,
       stars,
       text,
-      date: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
+      date: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
     };
     this.reviews.push(review);
 
@@ -69,7 +81,7 @@ export default class ReviewService {
     }
 
     const date = new Date();
-    foundReview.date = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
+    foundReview.date = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
     foundReview.stars = stars;
     foundReview.text = text;
 
@@ -81,7 +93,7 @@ export default class ReviewService {
       return { statusCode: 500, message: { error: 'Unable to update review.' } };
     }
 
-    return { statusCode: 201, message: { message: 'Updated review' } };
+    return { statusCode: 200, message: { message: 'Updated review' } };
   }
 
   // delete review
@@ -89,7 +101,7 @@ export default class ReviewService {
     const foundIndex = this.reviews.findIndex((review: Review) => review.isbn === isbn
       && review.username === username);
 
-    if (!foundIndex) {
+    if (foundIndex === -1) {
       return { statusCode: 404, message: { error: "Review doesn't exist." } };
     }
 
