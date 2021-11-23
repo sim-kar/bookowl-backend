@@ -4,3 +4,6 @@
 npm-debug.log
 .DS-store
 /*.env
+/.eslintrc
+/http-requests/
+/REQUIREMENTS.md
