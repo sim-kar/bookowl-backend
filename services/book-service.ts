@@ -4,8 +4,6 @@ import Book from '../models/book-model';
 export default class BookService {
   // get book by isbn
   static async getBookById(isbn: string) {
-    // const foundBook = this.books.find((book: BookI) => book.isbn === isbn);
-
     const foundBook = await Book.findOne({ isbn });
 
     if (!foundBook) {

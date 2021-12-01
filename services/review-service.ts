@@ -64,7 +64,6 @@ export default class ReviewService {
     stars: 0 | 1 | 2 | 3 | 4 | 5,
     text: string,
   ) {
-    // const foundReview = await this.#findReview(isbn, username);
     const foundReview = await Review.findOne({ isbn, username });
 
     if (!foundReview) {
