@@ -2,23 +2,22 @@ import express from 'express';
 import ReviewService from '../services/review-service';
 
 const router = express.Router();
-const reviewService = new ReviewService();
 
 // get all reviews --need at least one 'get all' for project
 router.get('/', async (req, res) => {
-  const payload = await reviewService.getReviews();
+  const payload = await ReviewService.getReviews();
   res.status(payload.statusCode).json(payload.reviews);
 });
 
 // get a review by isbn and username
 router.get('/:isbn', async (req, res) => {
-  const payload = await reviewService.getReview(req.params.isbn, req.body.username);
+  const payload = await ReviewService.getReview(req.params.isbn, req.body.username);
   res.status(payload.statusCode).json(payload.review);
 });
 
 // post review
 router.post('/', async (req, res) => {
-  const payload = await reviewService.addReview(
+  const payload = await ReviewService.addReview(
     req.body.isbn,
     req.body.username,
     req.body.stars,
@@ -29,7 +28,7 @@ router.post('/', async (req, res) => {
 
 // put review
 router.put('/', async (req, res) => {
-  const payload = await reviewService.updateReview(
+  const payload = await ReviewService.updateReview(
     req.body.isbn,
     req.body.username,
     req.body.stars,
@@ -40,7 +39,7 @@ router.put('/', async (req, res) => {
 
 // delete review
 router.delete('/:isbn', async (req, res) => {
-  const payload = await reviewService.deleteReview(req.params.isbn, req.body.username);
+  const payload = await ReviewService.deleteReview(req.params.isbn, req.body.username);
   res.status(payload.statusCode).json(payload.message);
 });
 

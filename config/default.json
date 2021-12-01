@@ -1,0 +1,11 @@
+{
+  "bookDB": {
+    "dbConfig": {
+      "host": "localhost",
+      "port": 27017,
+      "dbName": "bookDB",
+      "username": "",
+      "password": ""
+    }
+  }
+}

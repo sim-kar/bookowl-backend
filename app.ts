@@ -1,13 +1,19 @@
 import express from 'express';
-import books from './routes/books';
-import reviews from './routes/reviews';
+import cors from 'cors';
+import books from './routes/book-router';
+import reviews from './routes/review-router';
+import connect from './db';
 
 const app = express();
 
-// middleware
-app.use(express.json());
+// DATABASE
+await connect();
 
-// routes
+// MIDDLEWARE
+app.use(express.json());
+app.use(cors());
+
+// ROUTES
 app.use('/api/books', books);
 app.use('/api/reviews', reviews);
 

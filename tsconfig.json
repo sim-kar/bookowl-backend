@@ -9,9 +9,9 @@
   },
 
     "compilerOptions": {
-    "lib": ["es2021"],
+    "lib": ["ESNext"],
     "module": "ESNext",
-    "target": "es2021",
+    "target": "ESNext",
     "moduleResolution": "node",
 
     "strict": true,

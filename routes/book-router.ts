@@ -2,11 +2,11 @@ import express from 'express';
 import BookService from '../services/book-service';
 
 const router = express.Router();
-const bookService = new BookService();
+// const bookService = new BookService();
 
 // get a book
 router.get('/:isbn', async (req, res) => {
-  const payload = await bookService.getBookById(req.params.isbn);
+  const payload = await BookService.getBookById(req.params.isbn);
   res.status(payload.statusCode).json(payload.book);
 });
 
@@ -16,7 +16,7 @@ router.get('/:isbn', async (req, res) => {
 
 // post a book
 router.post('/', async (req, res) => {
-  const payload = await bookService.addBook(req.body);
+  const payload = await BookService.addBook(req.body);
   res.status(payload.statusCode).json(payload.message);
 });
 

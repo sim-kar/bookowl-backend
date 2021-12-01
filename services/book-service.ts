@@ -1,19 +1,12 @@
-import fs from 'fs/promises';
-import data from '../test-db.json';
-import Book from './Book';
+import IBook from './IBook';
+import Book from '../models/book-model';
 
 export default class BookService {
-  private file: string;
-  private books: Array<Book>;
-
-  constructor() {
-    this.file = './test-db.json';
-    this.books = data.books;
-  }
-
   // get book by isbn
-  async getBookById(isbn: string) {
-    const foundBook = this.books.find((book: Book) => book.isbn === isbn);
+  static async getBookById(isbn: string) {
+    // const foundBook = this.books.find((book: BookI) => book.isbn === isbn);
+
+    const foundBook = await Book.findOne({ isbn });
 
     if (!foundBook) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -25,18 +18,18 @@ export default class BookService {
   }
 
   // add book
-  async addBook(reqBook: Book) {
-    if (this.books.some((book) => book.isbn === reqBook.isbn)) {
+  static async addBook(reqBook: IBook) {
+    if (await Book.exists({ isbn: reqBook.isbn })) {
       return { statusCode: 409, message: { error: 'Book already exists.' } };
     }
 
-    this.books.push(reqBook);
+    const newBook = new Book({
+      ...reqBook,
+    });
 
     try {
-      await fs.writeFile(this.file, JSON.stringify(data, null, 2));
+      await newBook.save();
     } catch (error) {
-      // FIXME: is 500 Internal Sever Error the correct code? 'the server encountered an unexpected
-      //  condition that prevented it from fulfilling the request'
       return { statusCode: 500, message: { error: 'Unable to add book.' } };
     }
 
