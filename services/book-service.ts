@@ -3,8 +3,8 @@ import Book from '../models/book-model';
 
 export default class BookService {
   // get book by isbn
-  static async getBookById(isbn: string) {
-    const foundBook = await Book.findOne({ isbn });
+  static async getBook(isbn: string) {
+    const foundBook = await Book.findOne({ isbn }, ['-_id', '-__v']);
 
     if (!foundBook) {
       // FIXME: use 204 No Content with empty data instead of 404?

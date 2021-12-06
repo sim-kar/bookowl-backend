@@ -5,7 +5,7 @@ const router = express.Router();
 
 // get a book
 router.get('/:isbn', async (req, res) => {
-  const payload = await BookService.getBookById(req.params.isbn);
+  const payload = await BookService.getBook(req.params.isbn);
   res.status(payload.statusCode).json(payload.book);
 });
 

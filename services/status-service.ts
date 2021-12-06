@@ -5,7 +5,7 @@ import User from '../models/user-model';
 export default class StatusService {
   // get a users book statuses from db
   static async getStatuses(username: string, status: string) {
-    const foundStatuses = await Status.find({ username, status });
+    const foundStatuses = await Status.find({ username, status }, ['-_id', '-__v']);
 
     if (foundStatuses.length === 0) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -18,7 +18,7 @@ export default class StatusService {
 
   // get a book status by isbn and username
   static async getStatus(isbn: string, username: string) {
-    const foundStatus = await Status.findOne({ isbn, username });
+    const foundStatus = await Status.findOne({ isbn, username }, ['-_id', '-__v']);
 
     if (!foundStatus) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -29,11 +29,11 @@ export default class StatusService {
     return { statusCode: 200, status: foundStatus };
   }
 
+  // TODO: get status and book aggregate
+
   // add a book status to the databas
   static async addStatus(isbn: string, username: string, status: string) {
-    const foundStatus = await Status.findOne({ isbn, username });
-
-    if (foundStatus) {
+    if (await Status.exists({ isbn, username })) {
       return { statusCode: 409, message: { error: 'Status already exists.' } };
     }
 

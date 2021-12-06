@@ -5,12 +5,12 @@ import User from '../models/user-model';
 export default class ReviewService {
   // get all reviews
   static async getReviews() {
-    return { statusCode: 200, reviews: await Review.find({}) };
+    return { statusCode: 200, reviews: await Review.find({}, ['-_id', '-__v']) };
   }
 
   // get a review by isbn and username
   static async getReview(isbn: string, username: string) {
-    const foundReview = await Review.findOne({ isbn, username });
+    const foundReview = await Review.findOne({ isbn, username }, ['-_id', '-__v']);
 
     if (!foundReview) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -21,6 +21,8 @@ export default class ReviewService {
     return { statusCode: 200, review: foundReview };
   }
 
+  // TODO: get review and book aggregate
+
   // add a review
   static async addReview(
     isbn: string,
@@ -28,9 +30,7 @@ export default class ReviewService {
     stars: 0 | 1 | 2 | 3 | 4 | 5,
     text: string,
   ) {
-    const foundReview = await Review.findOne({ isbn, username });
-
-    if (foundReview) {
+    if (await Review.exists({ isbn, username })) {
       return { statusCode: 409, message: { error: 'Review already exists.' } };
     }
 
