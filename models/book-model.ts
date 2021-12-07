@@ -6,12 +6,14 @@ import IBook from '../services/IBook';
 const bookSchema = new mongoose.Schema<IBook>({
   isbn: { type: String, index: true, unique: true },
   title: String,
-  author: String,
+  authors: [String],
   cover: String,
   pages: Number,
   published: String, // yyyy-mm-dd. TODO: validation
   publisher: String,
   language: String,
+  description: String,
+  categories: [String],
 });
 
 const Book = mongoose.model<IBook>('Book', bookSchema);
