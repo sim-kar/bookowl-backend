@@ -3,7 +3,8 @@ import User from '../models/user-model';
 export default class UserService {
   // get user by username
   static async getUser(username: string) {
-    const foundUser = await User.findOne({ username }, ['-_id', '-__v']);
+    // don't return the password
+    const foundUser = await User.findOne({ username }, ['-_id', '-__v', '-password']);
 
     if (!foundUser) {
       // FIXME: use 204 No Content with empty data instead of 404?
