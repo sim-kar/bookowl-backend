@@ -5,7 +5,12 @@ import User from '../models/user-model';
 export default class StatusService {
   // get a users book statuses from db
   static async getStatuses(username: string, status: string) {
-    const foundStatuses = await Status.find({ username, status }, ['-_id', '-__v']);
+    const foundStatuses = await Status.find({ username, status }, ['-_id', '-__v'])
+      .populate({
+        path: 'book',
+        // not possible to remove _id, but can remove __v by specifying optional fields
+        select: ['title', 'author', 'cover', 'pages', 'published', 'publisher', 'language'],
+      });
 
     if (foundStatuses.length === 0) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -18,7 +23,12 @@ export default class StatusService {
 
   // get a book status by isbn and username
   static async getStatus(isbn: string, username: string) {
-    const foundStatus = await Status.findOne({ isbn, username }, ['-_id', '-__v']);
+    const foundStatus = await Status.findOne({ isbn, username }, ['-_id', '-__v'])
+      .populate({
+        path: 'book',
+        // not possible to remove _id, but can remove __v by specifying optional fields
+        select: ['title', 'author', 'cover', 'pages', 'published', 'publisher', 'language'],
+      });
 
     if (!foundStatus) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -29,8 +39,6 @@ export default class StatusService {
     return { statusCode: 200, status: foundStatus };
   }
 
-  // TODO: get status and book aggregate
-
   // add a book status to the databas
   static async addStatus(isbn: string, username: string, status: string) {
     if (await Status.exists({ isbn, username })) {
@@ -38,7 +46,9 @@ export default class StatusService {
     }
 
     // make sure isbn and username actually exist in db
-    if (!await Book.exists({ isbn }) || !await User.exists({ username })) {
+    // the book _id is needed for population
+    const foundBook = await Book.findOne({ isbn }, ['_id']);
+    if (!foundBook || !await User.exists({ username })) {
       return { statusCode: 404, message: { error: "Book or user doesn't exist." } };
     }
 
@@ -46,6 +56,7 @@ export default class StatusService {
       isbn,
       username,
       status,
+      book: foundBook._id,
     });
 
     try {

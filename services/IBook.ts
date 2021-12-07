@@ -1,4 +1,6 @@
-export default interface IBook {
+import mongoose from 'mongoose';
+
+export default interface IBook extends mongoose.Document {
   isbn: string;
   title: string;
   author: string;

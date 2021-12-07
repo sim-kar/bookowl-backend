@@ -5,12 +5,25 @@ import User from '../models/user-model';
 export default class ReviewService {
   // get all reviews
   static async getReviews() {
-    return { statusCode: 200, reviews: await Review.find({}, ['-_id', '-__v']) };
+    return {
+      statusCode: 200,
+      reviews: await Review.find({}, ['-_id', '-__v'])
+        .populate({
+          path: 'book',
+          // not possible to remove _id, but can remove __v by specifying optional fields
+          select: ['title', 'author', 'cover', 'pages', 'published', 'publisher', 'language'],
+        }),
+    };
   }
 
   // get a review by isbn and username
   static async getReview(isbn: string, username: string) {
-    const foundReview = await Review.findOne({ isbn, username }, ['-_id', '-__v']);
+    const foundReview = await Review.findOne({ isbn, username }, ['-_id', '-__v'])
+      .populate({
+        path: 'book',
+        // not possible to remove _id, but can remove __v by specifying optional fields
+        select: ['title', 'author', 'cover', 'pages', 'published', 'publisher', 'language'],
+      });
 
     if (!foundReview) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -20,8 +33,6 @@ export default class ReviewService {
 
     return { statusCode: 200, review: foundReview };
   }
-
-  // TODO: get review and book aggregate
 
   // add a review
   static async addReview(
@@ -35,7 +46,9 @@ export default class ReviewService {
     }
 
     // make sure isbn and username actually exist in db
-    if (!await Book.exists({ isbn }) || !await User.exists({ username })) {
+    // the book _id is needed for population
+    const foundBook = await Book.findOne({ isbn }, ['_id']);
+    if (!foundBook || !await User.exists({ username })) {
       return { statusCode: 404, message: { error: "Book or user doesn't exist." } };
     }
 
@@ -46,6 +59,7 @@ export default class ReviewService {
       stars,
       text,
       date: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
+      book: foundBook._id,
     });
 
     try {
