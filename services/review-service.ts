@@ -8,22 +8,14 @@ export default class ReviewService {
     return {
       statusCode: 200,
       reviews: await Review.find({}, ['-_id', '-__v'])
-        .populate({
-          path: 'book',
-          // not possible to remove _id, but can remove __v by specifying optional fields
-          select: ['title', 'author', 'cover', 'pages', 'published', 'publisher', 'language'],
-        }),
+        .populate({ path: 'book' }),
     };
   }
 
   // get a review by isbn and username
   static async getReview(isbn: string, username: string) {
     const foundReview = await Review.findOne({ isbn, username }, ['-_id', '-__v'])
-      .populate({
-        path: 'book',
-        // not possible to remove _id, but can remove __v by specifying optional fields
-        select: ['title', 'author', 'cover', 'pages', 'published', 'publisher', 'language'],
-      });
+      .populate({ path: 'book' });
 
     if (!foundReview) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -52,19 +44,20 @@ export default class ReviewService {
       return { statusCode: 404, message: { error: "Book or user doesn't exist." } };
     }
 
-    const date = new Date();
     const newReview = new Review({
       isbn,
       username,
       stars,
       text,
-      date: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
+      // get the date in yyyy-mm-dd format
+      date: ReviewService.#formatDate(new Date()),
       book: foundBook._id,
     });
 
     try {
       await newReview.save();
     } catch (error) {
+      console.error(error);
       return { statusCode: 500, message: { error: 'Unable to add review.' } };
     }
 
@@ -86,8 +79,8 @@ export default class ReviewService {
       return { statusCode: 404, message: { error: "Review doesn't exist." } };
     }
 
-    const date = new Date();
-    foundReview.date = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    // get date in yyyy-mm-dd format
+    foundReview.date = ReviewService.#formatDate(new Date());
     foundReview.stars = stars;
     foundReview.text = text;
 
@@ -117,5 +110,13 @@ export default class ReviewService {
     }
 
     return { statusCode: 200, message: { message: 'Deleted review' } };
+  }
+
+  static #formatDate(date: Date) {
+    return [
+      date.getFullYear(),
+      (date.getMonth() + 1).toString().padStart(2, '0'),
+      date.getDate().toString().padStart(2, '0'),
+    ].join('-');
   }
 }

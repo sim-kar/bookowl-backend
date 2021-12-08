@@ -11,6 +11,7 @@ export default class BookService {
     return BookService.#searchBook(author, 'inauthor', 10);
   }
 
+  // helper method to search for books using an open api (google books)
   static #searchBook(keyword: string, field: string, maxResults: number) {
     const options = {
       hostname: 'www.googleapis.com',
@@ -91,7 +92,8 @@ export default class BookService {
 
     if (!foundBook) {
       // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
+      // see discussion here:
+      // https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, book: {} };
     }
 

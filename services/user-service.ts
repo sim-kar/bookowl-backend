@@ -23,12 +23,11 @@ export default class UserService {
       return { statusCode: 409, message: { error: 'Username or email already exists.' } };
     }
 
-    const date = new Date();
     const newUser = new User({
       username,
       email,
       password,
-      joined: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
+      joined: UserService.#formatDate(new Date()),
     });
 
     try {
@@ -70,5 +69,13 @@ export default class UserService {
     }
 
     return { statusCode: 200, message: { message: 'Updated user' } };
+  }
+
+  static #formatDate(date: Date) {
+    return [
+      date.getFullYear(),
+      (date.getMonth() + 1).toString().padStart(2, '0'),
+      date.getDate().toString().padStart(2, '0'),
+    ].join('-');
   }
 }

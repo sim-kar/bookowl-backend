@@ -4,13 +4,9 @@ import User from '../models/user-model';
 
 export default class StatusService {
   // get a users book statuses from db
-  static async getStatuses(username: string, status: string) {
+  static async getStatuses(username: string, status: number) {
     const foundStatuses = await Status.find({ username, status }, ['-_id', '-__v'])
-      .populate({
-        path: 'book',
-        // not possible to remove _id, but can remove __v by specifying optional fields
-        select: ['title', 'author', 'cover', 'pages', 'published', 'publisher', 'language'],
-      });
+      .populate({ path: 'book' });
 
     if (foundStatuses.length === 0) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -24,11 +20,7 @@ export default class StatusService {
   // get a book status by isbn and username
   static async getStatus(isbn: string, username: string) {
     const foundStatus = await Status.findOne({ isbn, username }, ['-_id', '-__v'])
-      .populate({
-        path: 'book',
-        // not possible to remove _id, but can remove __v by specifying optional fields
-        select: ['title', 'author', 'cover', 'pages', 'published', 'publisher', 'language'],
-      });
+      .populate({ path: 'book' });
 
     if (!foundStatus) {
       // FIXME: use 204 No Content with empty data instead of 404?
@@ -40,7 +32,7 @@ export default class StatusService {
   }
 
   // add a book status to the databas
-  static async addStatus(isbn: string, username: string, status: string) {
+  static async addStatus(isbn: string, username: string, status: number) {
     if (await Status.exists({ isbn, username })) {
       return { statusCode: 409, message: { error: 'Status already exists.' } };
     }
@@ -69,7 +61,7 @@ export default class StatusService {
   }
 
   // update a book status in the database
-  static async updateStatus(isbn: string, username: string, status: string) {
+  static async updateStatus(isbn: string, username: string, status: number) {
     const foundStatus = await Status.findOne({ isbn, username });
 
     if (!foundStatus) {
