@@ -1,14 +1,15 @@
 import https from 'https';
 import IBook from './IBook';
 import Book from '../models/Book';
+import Constants from '../utils/Constants';
 
 export default class BookService {
   static async searchBooksByTitle(title: string) {
-    return BookService.#searchBook(title, 'intitle', 10);
+    return BookService.#searchBook(title, Constants.TITLE_FIELD, Constants.MAX_RESULTS);
   }
 
   static async searchBooksByAuthor(author: string) {
-    return BookService.#searchBook(author, 'inauthor', 10);
+    return BookService.#searchBook(author, Constants.AUTHOR_FIELD, Constants.MAX_RESULTS);
   }
 
   // helper method to search for books using an open api (google books)
@@ -80,7 +81,7 @@ export default class BookService {
 
   static #getCover(images: any) {
     if (!images) {
-      return ''; // TODO: placeholder
+      return Constants.PLACEHOLDER_IMAGE;
     }
 
     return images.thumbnail;
