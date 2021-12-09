@@ -1,6 +1,6 @@
 import https from 'https';
 import IBook from './IBook';
-import Book from '../models/book-model';
+import Book from '../models/Book';
 
 export default class BookService {
   static async searchBooksByTitle(title: string) {
@@ -80,7 +80,7 @@ export default class BookService {
 
   static #getCover(images: any) {
     if (!images) {
-      return ''; // TODO: path to placeholder
+      return ''; // TODO: placeholder
     }
 
     return images.thumbnail;

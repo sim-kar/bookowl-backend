@@ -1,4 +1,4 @@
-import User from '../models/user-model';
+import User from '../models/User';
 import DateUtils from '../utils/DateUtils';
 
 export default class UserService {

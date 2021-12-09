@@ -1,6 +1,6 @@
-import Status from '../models/status-model';
-import Book from '../models/book-model';
-import User from '../models/user-model';
+import Status from '../models/Status';
+import Book from '../models/Book';
+import User from '../models/User';
 
 export default class StatusService {
   // get a users book statuses from db

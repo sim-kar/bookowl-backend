@@ -9,7 +9,7 @@ const {
   password,
 } = config.get('bookDB.dbConfig');
 
-export default async function connect() {
+export default async function dbConnect() {
 // `mongodb://${username}:${password}@${host}:${dbPort}/${dbName}`
   await mongoose.connect(`mongodb://${host}:${dbPort}/${dbName}`)
     .catch((error) => {

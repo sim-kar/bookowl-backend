@@ -1,9 +1,9 @@
 import express from 'express';
-import BookService from '../services/book-service';
+import BookService from '../services/BookService';
 
-const router = express.Router();
+const BookRouter = express.Router();
 // search for books by title
-router.get('/title=:title', async (req, res) => {
+BookRouter.get('/title=:title', async (req, res) => {
   const payload = await BookService.searchBooksByTitle(req.params.title);
   if (payload.statusCode != null) {
     res.status(payload.statusCode).json(payload.books);
@@ -11,7 +11,7 @@ router.get('/title=:title', async (req, res) => {
 });
 
 // search for books by author
-router.get('/author=:author', async (req, res) => {
+BookRouter.get('/author=:author', async (req, res) => {
   const payload = await BookService.searchBooksByAuthor(req.params.author);
   if (payload.statusCode != null) {
     res.status(payload.statusCode).json(payload.books);
@@ -19,15 +19,15 @@ router.get('/author=:author', async (req, res) => {
 });
 
 // get a book
-router.get('/:isbn', async (req, res) => {
+BookRouter.get('/:isbn', async (req, res) => {
   const payload = await BookService.getBook(req.params.isbn);
   res.status(payload.statusCode).json(payload.book);
 });
 
 // post a book
-router.post('/', async (req, res) => {
+BookRouter.post('/', async (req, res) => {
   const payload = await BookService.addBook(req.body);
   res.status(payload.statusCode).json(payload.message);
 });
 
-export default router;
+export default BookRouter;

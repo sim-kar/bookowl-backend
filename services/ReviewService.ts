@@ -1,6 +1,6 @@
-import Book from '../models/book-model';
-import Review from '../models/review-model';
-import User from '../models/user-model';
+import Book from '../models/Book';
+import Review from '../models/Review';
+import User from '../models/User';
 import DateUtils from '../utils/DateUtils';
 
 export default class ReviewService {
