@@ -1,6 +1,7 @@
 import Book from '../models/book-model';
 import Review from '../models/review-model';
 import User from '../models/user-model';
+import DateUtils from '../utils/DateUtils';
 
 export default class ReviewService {
   // get all reviews
@@ -50,7 +51,7 @@ export default class ReviewService {
       stars,
       text,
       // get the date in yyyy-mm-dd format
-      date: ReviewService.#formatDate(new Date()),
+      date: DateUtils.formatDate(new Date()),
       book: foundBook._id,
     });
 
@@ -80,7 +81,7 @@ export default class ReviewService {
     }
 
     // get date in yyyy-mm-dd format
-    foundReview.date = ReviewService.#formatDate(new Date());
+    foundReview.date = DateUtils.formatDate(new Date());
     foundReview.stars = stars;
     foundReview.text = text;
 
@@ -110,13 +111,5 @@ export default class ReviewService {
     }
 
     return { statusCode: 200, message: { message: 'Deleted review' } };
-  }
-
-  static #formatDate(date: Date) {
-    return [
-      date.getFullYear(),
-      (date.getMonth() + 1).toString().padStart(2, '0'),
-      date.getDate().toString().padStart(2, '0'),
-    ].join('-');
   }
 }

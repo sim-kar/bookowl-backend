@@ -1,8 +1,6 @@
 import mongoose from 'mongoose';
 import IReview from '../services/IReview';
-
-// regex used to validate date with format yyyy-mm-dd
-const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
+import Constants from '../utils/Constants';
 
 const reviewSchema = new mongoose.Schema<IReview>({
   isbn: { type: String, required: true },
@@ -14,7 +12,7 @@ const reviewSchema = new mongoose.Schema<IReview>({
     required: true,
   },
   text: String,
-  date: { type: String, match: dateRegex, required: true },
+  date: { type: String, match: Constants.DATE_REGEX, required: true },
   book: { type: mongoose.Schema.Types.ObjectId, ref: 'Book', required: true },
 });
 

@@ -1,4 +1,5 @@
 import User from '../models/user-model';
+import DateUtils from '../utils/DateUtils';
 
 export default class UserService {
   // get user by username
@@ -27,7 +28,7 @@ export default class UserService {
       username,
       email,
       password,
-      joined: UserService.#formatDate(new Date()),
+      joined: DateUtils.formatDate(new Date()),
     });
 
     try {
@@ -69,13 +70,5 @@ export default class UserService {
     }
 
     return { statusCode: 200, message: { message: 'Updated user' } };
-  }
-
-  static #formatDate(date: Date) {
-    return [
-      date.getFullYear(),
-      (date.getMonth() + 1).toString().padStart(2, '0'),
-      date.getDate().toString().padStart(2, '0'),
-    ].join('-');
   }
 }
