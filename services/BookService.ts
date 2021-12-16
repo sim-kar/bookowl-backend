@@ -84,7 +84,7 @@ export default class BookService {
       return Constants.PLACEHOLDER_IMAGE;
     }
 
-    return images.thumbnail;
+    return images.thumbnail.replace('&edge=curl', '');
   }
 
   // get book by isbn
