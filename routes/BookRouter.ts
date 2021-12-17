@@ -24,6 +24,12 @@ BookRouter.get('/:isbn', async (req, res) => {
   res.status(payload.statusCode).json(payload.book);
 });
 
+// get the highest rated books
+BookRouter.get('/highest-rated/:maxResults', async (req, res) => {
+  const payload = await BookService.getHighestRatedBooks(parseInt(req.params.maxResults, 10));
+  res.status(payload.statusCode).json(payload.books);
+});
+
 // post a book
 BookRouter.post('/', async (req, res) => {
   const payload = await BookService.addBook(req.body);

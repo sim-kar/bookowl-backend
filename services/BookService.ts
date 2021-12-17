@@ -1,6 +1,7 @@
 import https from 'https';
 import IBook from './IBook';
 import Book from '../models/Book';
+import Review from '../models/Review';
 import Constants from '../utils/Constants';
 
 export default class BookService {
@@ -99,6 +100,26 @@ export default class BookService {
     }
 
     return { statusCode: 200, book: foundBook };
+  }
+
+  // get the highest rated books
+  static async getHighestRatedBooks(maxResults: number) {
+    // group reviews by book and get the average rating
+    const foundBooks = await Review.aggregate([
+      { $group: { _id: '$book', book: { $first: '$book' }, averageRating: { $avg: '$stars' } } },
+      { $sort: { averageRating: -1 } },
+      { $limit: maxResults },
+    ]);
+
+    if (!foundBooks) {
+      // FIXME: use 204 No Content with empty data instead of 404?
+      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
+      return { statusCode: 204, books: {} };
+    }
+
+    await Review.populate(foundBooks, 'book');
+
+    return { statusCode: 200, books: foundBooks };
   }
 
   // add book
