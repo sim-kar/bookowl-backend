@@ -104,6 +104,10 @@ export default class BookService {
 
   // get the highest rated books
   static async getHighestRatedBooks(maxResults: number) {
+    if (maxResults < 1) {
+      return { statusCode: 204, books: {} };
+    }
+
     // group reviews by book and get the average rating
     const foundBooks = await Review.aggregate([
       { $group: { _id: '$book', book: { $first: '$book' }, averageRating: { $avg: '$stars' } } },
