@@ -19,7 +19,13 @@ export default class UserService {
   // FIXME: get user from email?
 
   // add a new user
-  static async addUser(username: string, email: string, password: string) {
+  static async addUser(
+    username: string,
+    email: string,
+    password: string,
+    gender: string,
+    birthdate: string,
+  ) {
     if (await User.exists({ $or: [{ username }, { email }] })) {
       return { statusCode: 409, message: { error: 'Username or email already exists.' } };
     }
@@ -28,6 +34,8 @@ export default class UserService {
       username,
       email,
       password,
+      gender,
+      birthdate,
       joined: DateUtils.formatDate(new Date()),
     });
 
@@ -40,7 +48,7 @@ export default class UserService {
     return { statusCode: 201, message: { message: 'Added user.' } };
   }
 
-  // update a user
+  // update a user (e-mail or password)
   static async updateUser(username: string, email: string, password: string) {
     const foundUser = await User.findOne({ username });
 

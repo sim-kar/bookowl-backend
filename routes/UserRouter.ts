@@ -13,7 +13,13 @@ UserRouter.get('/', async (req, res) => {
 
 // post user
 UserRouter.post('/', async (req, res) => {
-  const payload = await UserService.addUser(req.body.username, req.body.email, req.body.password);
+  const payload = await UserService.addUser(
+    req.body.username,
+    req.body.email,
+    req.body.password,
+    req.body.gender,
+    req.body.birthdate,
+  );
   res.status(payload.statusCode).json(payload.message);
 });
 
