@@ -47,8 +47,8 @@ export default class BookService {
               authors: book.volumeInfo.authors,
               cover: BookService.#getCover(book.volumeInfo.imageLinks),
               pages: book.volumeInfo.pageCount,
-              published: book.volumeInfo.publisher,
-              publisher: book.volumeInfo.publishedDate,
+              published: book.volumeInfo.publishedDate,
+              publisher: book.volumeInfo.publisher,
               language: book.volumeInfo.language,
               description: book.volumeInfo.description,
               categories: book.volumeInfo.categories,
@@ -148,6 +148,8 @@ export default class BookService {
     return { statusCode: 200, books: foundBooks };
   }
 
+  // TODO: get popular books
+
   // add book
   static async addBook(reqBook: IBook) {
     if (await Book.exists({ isbn: reqBook.isbn })) {
@@ -161,6 +163,7 @@ export default class BookService {
     try {
       await newBook.save();
     } catch (error) {
+      console.log(error);
       return { statusCode: 500, message: { error: 'Unable to add book.' } };
     }
 
