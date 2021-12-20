@@ -3,6 +3,7 @@ import IBook from './IBook';
 import Book from '../models/Book';
 import Review from '../models/Review';
 import Constants from '../utils/Constants';
+import Status from '../models/Status';
 
 export default class BookService {
   static async searchBooksByTitle(title: string) {
@@ -85,6 +86,7 @@ export default class BookService {
       return Constants.PLACEHOLDER_IMAGE;
     }
 
+    // remove page curl graphic from images from google books API
     return images.thumbnail.replace('&edge=curl', '');
   }
 
@@ -115,13 +117,33 @@ export default class BookService {
       { $limit: maxResults },
     ]);
 
-    if (!foundBooks) {
+    if (foundBooks.length === 0) {
       // FIXME: use 204 No Content with empty data instead of 404?
       // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, books: {} };
     }
 
     await Review.populate(foundBooks, 'book');
+
+    return { statusCode: 200, books: foundBooks };
+  }
+
+  // get most recently added (to a user's bookshelf) books
+  static async getRecentlyAddedBooks(maxResults: number, statusFilter: {} | { status: number }) {
+    const foundBooks = await Status.aggregate([
+      { $match: statusFilter },
+      { $sort: { date: -1 } },
+      { $group: { _id: '$book', book: { $first: '$book' }, date: { $first: '$date' } } },
+      { $limit: maxResults },
+    ]);
+
+    if (foundBooks.length === 0) {
+      // FIXME: use 204 No Content with empty data instead of 404?
+      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
+      return { statusCode: 204, books: {} };
+    }
+
+    await Status.populate(foundBooks, 'book');
 
     return { statusCode: 200, books: foundBooks };
   }

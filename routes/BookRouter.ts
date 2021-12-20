@@ -24,6 +24,15 @@ BookRouter.get('/highest-rated', async (req, res) => {
   res.status(payload.statusCode).json(payload.books);
 });
 
+// get the most recently updated books
+BookRouter.get('/recently-updated', async (req, res) => {
+  const payload = await BookService.getRecentlyAddedBooks(
+    req.body.maxResults,
+    req.body.statusFilter,
+  );
+  res.status(payload.statusCode).json(payload.books);
+});
+
 // get a book
 BookRouter.get('/:isbn', async (req, res) => {
   const payload = await BookService.getBook(req.params.isbn);
