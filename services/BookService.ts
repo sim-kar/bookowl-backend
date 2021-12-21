@@ -154,8 +154,14 @@ export default class BookService {
     return { statusCode: 200, books: foundBooks };
   }
 
-  // get most recently added (to a user's bookshelf) books (only returns unique books)
-  static async getRecentlyAddedBooks(maxResults: number, statusFilter: {} | { status: number }) {
+  // get most recently updated (user status) books (only returns unique books)
+  static async getRecentlyUpdatedBooks(maxResults: number, status?: number) {
+    let statusFilter = {};
+
+    if (status) {
+      statusFilter = { status };
+    }
+
     const foundBooks = await Status.aggregate([
       { $match: statusFilter },
       { $sort: { date: -1 } },
