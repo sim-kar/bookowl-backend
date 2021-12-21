@@ -2,6 +2,8 @@ import Status from '../models/Status';
 import Book from '../models/Book';
 import User from '../models/User';
 import DateUtils from '../utils/DateUtils';
+import IBook from './IBook';
+import BookService from './BookService';
 
 export default class StatusService {
   // get a users book statuses from db
@@ -32,15 +34,21 @@ export default class StatusService {
     return { statusCode: 200, status: foundStatus };
   }
 
-  // add a book status to the databas
-  static async addStatus(isbn: string, username: string, status: number) {
+  // add a book status to the database
+  static async addStatus(isbn: string, username: string, status: number, book?: IBook) {
     if (await Status.exists({ isbn, username })) {
       return { statusCode: 409, message: { error: 'Status already exists.' } };
+    }
+
+    // a book was given as parameter, try to add it to the db
+    if (book) {
+      await BookService.addBook(book);
     }
 
     // make sure isbn and username actually exist in db
     // the book _id is needed for population
     const foundBook = await Book.findOne({ isbn }, ['_id']);
+
     if (!foundBook || !await User.exists({ username })) {
       return { statusCode: 404, message: { error: "Book or user doesn't exist." } };
     }

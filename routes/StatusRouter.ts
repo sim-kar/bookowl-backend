@@ -17,7 +17,12 @@ StatusRouter.get('/:isbn', async (req, res) => {
 
 // post status
 StatusRouter.post('/', async (req, res) => {
-  const payload = await StatusService.addStatus(req.body.isbn, req.body.username, req.body.status);
+  const payload = await StatusService.addStatus(
+    req.body.isbn,
+    req.body.username,
+    req.body.status,
+    req.body.book,
+  );
   res.status(payload.statusCode).json(payload.message);
 });
 
