@@ -1,10 +1,14 @@
 import express from 'express';
 import BookService from '../services/BookService';
+import NumberUtils from '../utils/NumberUtils';
 
 const BookRouter = express.Router();
 // search for books by title
 BookRouter.get('/title=:title', async (req, res) => {
-  const payload = await BookService.searchBooksByTitle(req.params.title);
+  // convert optional parameter to number if it exists
+  const maxResults = NumberUtils.getNumber(req.query.maxResults);
+
+  const payload = await BookService.searchBooksByTitle(req.params.title, maxResults);
   if (payload.statusCode != null) {
     res.status(payload.statusCode).json(payload.books);
   }
@@ -12,7 +16,10 @@ BookRouter.get('/title=:title', async (req, res) => {
 
 // search for books by author
 BookRouter.get('/author=:author', async (req, res) => {
-  const payload = await BookService.searchBooksByAuthor(req.params.author);
+  // convert optional parameter to number if it exists
+  const maxResults = NumberUtils.getNumber(req.query.maxResults);
+
+  const payload = await BookService.searchBooksByAuthor(req.params.author, maxResults);
   if (payload.statusCode != null) {
     res.status(payload.statusCode).json(payload.books);
   }

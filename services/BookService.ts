@@ -6,19 +6,20 @@ import Constants from '../utils/Constants';
 import Status from '../models/Status';
 
 export default class BookService {
-  static async searchBooksByTitle(title: string) {
-    return BookService.#searchBook(title, Constants.TITLE_FIELD, Constants.MAX_RESULTS);
+  static async searchBooksByTitle(title: string, maxResults: number = Constants.MAX_RESULTS) {
+    return BookService.#searchBook(title, Constants.TITLE_FIELD, maxResults);
   }
 
-  static async searchBooksByAuthor(author: string) {
-    return BookService.#searchBook(author, Constants.AUTHOR_FIELD, Constants.MAX_RESULTS);
+  static async searchBooksByAuthor(author: string, maxResults: number = Constants.MAX_RESULTS) {
+    return BookService.#searchBook(author, Constants.AUTHOR_FIELD, maxResults);
   }
 
   // helper method to search for books using an open api (google books)
   static #searchBook(keyword: string, field: string, maxResults: number) {
     const options = {
       hostname: 'www.googleapis.com',
-      path: `/books/v1/volumes?q=${field}:${encodeURI(keyword)}&maxResults=${maxResults}`
+      path: `/books/v1/volumes?q=${field}:${encodeURI(keyword)}&maxResults=`
+        + `${maxResults > 40 ? 40 : maxResults}` // google books allows at most 40 results
         + '&orderBy=relevance&projection=FULL',
     };
 
@@ -33,7 +34,7 @@ export default class BookService {
         res.on('end', () => {
           const result = JSON.parse(data);
 
-          if (result.totalItems === 0) {
+          if (!result.items || result.totalItems === 0) {
             return resolve({ statusCode: 204, books: [] });
           }
 
@@ -41,29 +42,53 @@ export default class BookService {
           const books: IBook[] = [];
 
           foundBooks.forEach((book: any) => {
-            books.push(<IBook>{
-              isbn: BookService.#getIdentifier(book.volumeInfo.industryIdentifiers),
-              title: book.volumeInfo.title,
-              authors: book.volumeInfo.authors,
-              cover: BookService.#getCover(book.volumeInfo.imageLinks),
-              pages: book.volumeInfo.pageCount,
-              published: book.volumeInfo.publishedDate,
-              publisher: book.volumeInfo.publisher,
-              language: book.volumeInfo.language,
-              description: book.volumeInfo.description,
-              categories: book.volumeInfo.categories,
-            });
+            // validate the data. Some results from google books lack the necessary keys
+            if (this.#validateBookData(book.volumeInfo)) {
+              books.push(<IBook>{
+                isbn: BookService.#getIdentifier(book.volumeInfo.industryIdentifiers),
+                title: book.volumeInfo.title,
+                authors: book.volumeInfo.authors,
+                cover: BookService.#getCover(book.volumeInfo.imageLinks),
+                pages: book.volumeInfo.pageCount,
+                published: book.volumeInfo.publishedDate,
+                publisher: book.volumeInfo.publisher,
+                language: book.volumeInfo.language,
+                description: book.volumeInfo.description,
+                categories: book.volumeInfo.categories,
+              });
+            }
           });
 
           return resolve({ statusCode: res.statusCode, books });
         });
 
-        res.on('error', (e) => {
-          console.error(e);
-          return reject(e);
-        });
+        res.on('error', (e) => reject(e));
       });
     });
+  }
+
+  static #validateBookData(data: any): boolean {
+    // imageLinks are allowed to be absent
+    const requiredKeys = [
+      'industryIdentifiers',
+      'title',
+      'authors',
+      'pageCount',
+      'publishedDate',
+      'publisher',
+      'language',
+      'description',
+      'categories',
+    ];
+    let valid = true;
+
+    requiredKeys.forEach((key) => {
+      if (!(key in data)) {
+        valid = false;
+      }
+    });
+
+    return valid;
   }
 
   static #getIdentifier(identifiers: [{ type: string, identifier: string }]) {
@@ -128,7 +153,7 @@ export default class BookService {
     return { statusCode: 200, books: foundBooks };
   }
 
-  // get most recently added (to a user's bookshelf) books
+  // get most recently added (to a user's bookshelf) books (only returns unique books)
   static async getRecentlyAddedBooks(maxResults: number, statusFilter: {} | { status: number }) {
     const foundBooks = await Status.aggregate([
       { $match: statusFilter },
@@ -163,7 +188,6 @@ export default class BookService {
     try {
       await newBook.save();
     } catch (error) {
-      console.log(error);
       return { statusCode: 500, message: { error: 'Unable to add book.' } };
     }
 
