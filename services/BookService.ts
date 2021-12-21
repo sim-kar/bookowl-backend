@@ -19,7 +19,8 @@ export default class BookService {
     const options = {
       hostname: 'www.googleapis.com',
       path: `/books/v1/volumes?q=${field}:${encodeURI(keyword)}&maxResults=`
-        + `${maxResults > 40 ? 40 : maxResults}` // google books allows at most 40 results
+        // google books limits how many results you can get
+        + `${maxResults > Constants.MAX_ALLOWED_RESULTS ? Constants.MAX_ALLOWED_RESULTS : maxResults}`
         + '&orderBy=relevance&projection=FULL',
     };
 

@@ -12,6 +12,8 @@ const Constants = {
   AUTHOR_FIELD: 'inauthor',
   // maximum number of results to get when searching public api
   MAX_RESULTS: 15,
+  // maximum number of allowed results when using public api
+  MAX_ALLOWED_RESULTS: 40,
 };
 
 export default Object.freeze(Constants);
