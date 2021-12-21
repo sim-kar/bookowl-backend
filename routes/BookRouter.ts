@@ -42,6 +42,15 @@ BookRouter.get('/recently-updated/:maxResults', async (req, res) => {
   res.status(payload.statusCode).json(payload.books);
 });
 
+// get the most popular books
+BookRouter.get('/popular/:maxResults', async (req, res) => {
+  const maxResults = NumberUtils.getNumber(req.params.maxResults);
+  const statusFilter = NumberUtils.getNumberOrUndefined(req.query.statusFilter);
+
+  const payload = await BookService.getPopularBooks(maxResults, statusFilter);
+  res.status(payload.statusCode).json(payload.books);
+});
+
 // get a book
 BookRouter.get('/:isbn', async (req, res) => {
   const payload = await BookService.getBook(req.params.isbn);

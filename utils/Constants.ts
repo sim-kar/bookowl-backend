@@ -14,6 +14,8 @@ const Constants = {
   MAX_RESULTS: 15,
   // maximum number of allowed results when using public api
   MAX_ALLOWED_RESULTS: 40,
+  // number of days before a book update doesn't affect popular ranking (should be negative)
+  POPULAR_DATE_CUTOFF: -30,
 };
 
 export default Object.freeze(Constants);

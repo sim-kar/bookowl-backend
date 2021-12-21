@@ -4,6 +4,7 @@ import Book from '../models/Book';
 import Review from '../models/Review';
 import Constants from '../utils/Constants';
 import Status from '../models/Status';
+import DateUtils from '../utils/DateUtils';
 
 export default class BookService {
   static async searchBooksByTitle(title: string, maxResults: number = Constants.MAX_RESULTS) {
@@ -180,7 +181,34 @@ export default class BookService {
     return { statusCode: 200, books: foundBooks };
   }
 
-  // TODO: get popular books
+  static async getPopularBooks(maxResults: number, status?: number) {
+    let statusFilter = {};
+
+    if (status) {
+      statusFilter = { status };
+    }
+
+    // status updates before this date doesn't affect popular ranking
+    const minDate = DateUtils.formatDate(DateUtils.getRelativeDate(Constants.POPULAR_DATE_CUTOFF));
+
+    const foundBooks = await Status.aggregate([
+      { $match: statusFilter },
+      { $match: { date: { $gte: minDate } } },
+      { $group: { _id: '$book', book: { $first: '$book' }, count: { $sum: 1 } } },
+      { $limit: maxResults },
+      { $sort: { count: -1 } },
+    ]);
+
+    if (foundBooks.length === 0) {
+      // FIXME: use 204 No Content with empty data instead of 404?
+      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
+      return { statusCode: 204, books: {} };
+    }
+
+    await Status.populate(foundBooks, 'book');
+
+    return { statusCode: 200, books: foundBooks };
+  }
 
   // add book
   static async addBook(reqBook: IBook) {
