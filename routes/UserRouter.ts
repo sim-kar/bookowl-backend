@@ -4,12 +4,10 @@ import UserService from '../services/UserService';
 const UserRouter = express.Router();
 
 // get a user
-UserRouter.get('/', async (req, res) => {
-  const payload = await UserService.getUser(req.body.username);
+UserRouter.get('/:username', async (req, res) => {
+  const payload = await UserService.getUser(req.params.username);
   res.status(payload.statusCode).json(payload.user);
 });
-
-// FIXME: get a user by email?
 
 // post user
 UserRouter.post('/', async (req, res) => {

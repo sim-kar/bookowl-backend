@@ -11,7 +11,7 @@ const Constants = {
   // field used to search by author in public api
   AUTHOR_FIELD: 'inauthor',
   // maximum number of results to get when searching public api
-  MAX_RESULTS: 15,
+  LIMIT: 15,
   // maximum number of allowed results when using public api
   MAX_ALLOWED_RESULTS: 40,
   // number of days before a book update doesn't affect popular ranking (should be negative)

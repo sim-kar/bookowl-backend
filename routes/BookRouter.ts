@@ -3,51 +3,52 @@ import BookService from '../services/BookService';
 import NumberUtils from '../utils/NumberUtils';
 
 const BookRouter = express.Router();
-// search for books by title
-BookRouter.get('/title=:title', async (req, res) => {
-  // convert optional parameter to number if it exists
-  const maxResults = NumberUtils.getNumberOrUndefined(req.query.maxResults);
 
-  const payload = await BookService.searchBooksByTitle(req.params.title, maxResults);
+// search for books by title
+BookRouter.get('/title/:title', async (req, res) => {
+  // convert optional parameter to number if it exists
+  const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
+
+  const payload = await BookService.searchBooksByTitle(req.params.title, limit);
   if (payload.statusCode != null) {
     res.status(payload.statusCode).json(payload.books);
   }
 });
 
 // search for books by author
-BookRouter.get('/author=:author', async (req, res) => {
+BookRouter.get('/author/:author', async (req, res) => {
   // convert optional parameter to number if it exists
-  const maxResults = NumberUtils.getNumberOrUndefined(req.query.maxResults);
+  const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
 
-  const payload = await BookService.searchBooksByAuthor(req.params.author, maxResults);
+  const payload = await BookService.searchBooksByAuthor(req.params.author, limit);
   if (payload.statusCode != null) {
     res.status(payload.statusCode).json(payload.books);
   }
 });
 
 // get the highest rated books
-BookRouter.get('/highest-rated/:maxResults', async (req, res) => {
-  const maxResults = NumberUtils.getNumber(req.params.maxResults);
+BookRouter.get('/highest-rated', async (req, res) => {
+  const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
 
-  const payload = await BookService.getHighestRatedBooks(maxResults);
+  const payload = await BookService.getHighestRatedBooks(limit);
   res.status(payload.statusCode).json(payload.books);
 });
 
 // get the most recently updated books
-BookRouter.get('/recently-updated/:maxResults', async (req, res) => {
-  const maxResults = NumberUtils.getNumber(req.params.maxResults);
+BookRouter.get('/recently-updated', async (req, res) => {
+  const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
   const statusFilter = NumberUtils.getNumberOrUndefined(req.query.statusFilter);
 
-  const payload = await BookService.getRecentlyUpdatedBooks(maxResults, statusFilter);
+  const payload = await BookService.getRecentlyUpdatedBooks(statusFilter, limit);
   res.status(payload.statusCode).json(payload.books);
 });
 
 // get the most popular books
-BookRouter.get('/popular/:maxResults', async (req, res) => {
-  const maxResults = NumberUtils.getNumber(req.params.maxResults);
+BookRouter.get('/popular', async (req, res) => {
+  const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
   const statusFilter = NumberUtils.getNumberOrUndefined(req.query.statusFilter);
 
-  const payload = await BookService.getPopularBooks(maxResults, statusFilter);
+  const payload = await BookService.getPopularBooks(statusFilter, limit);
   res.status(payload.statusCode).json(payload.books);
 });
 

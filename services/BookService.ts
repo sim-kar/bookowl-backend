@@ -7,21 +7,21 @@ import Status from '../models/Status';
 import DateUtils from '../utils/DateUtils';
 
 export default class BookService {
-  static async searchBooksByTitle(title: string, maxResults: number = Constants.MAX_RESULTS) {
-    return BookService.#searchBook(title, Constants.TITLE_FIELD, maxResults);
+  static async searchBooksByTitle(title: string, limit: number = Constants.LIMIT) {
+    return BookService.#searchBook(title, Constants.TITLE_FIELD, limit);
   }
 
-  static async searchBooksByAuthor(author: string, maxResults: number = Constants.MAX_RESULTS) {
-    return BookService.#searchBook(author, Constants.AUTHOR_FIELD, maxResults);
+  static async searchBooksByAuthor(author: string, limit: number = Constants.LIMIT) {
+    return BookService.#searchBook(author, Constants.AUTHOR_FIELD, limit);
   }
 
   // helper method to search for books using an open api (google books)
-  static #searchBook(keyword: string, field: string, maxResults: number) {
+  static #searchBook(keyword: string, field: string, limit: number) {
     const options = {
       hostname: 'www.googleapis.com',
       path: `/books/v1/volumes?q=${field}:${encodeURI(keyword)}&maxResults=`
         // google books limits how many results you can get
-        + `${maxResults > Constants.MAX_ALLOWED_RESULTS ? Constants.MAX_ALLOWED_RESULTS : maxResults}`
+        + `${limit > Constants.MAX_ALLOWED_RESULTS ? Constants.MAX_ALLOWED_RESULTS : limit}`
         + '&orderBy=relevance&projection=FULL',
     };
 
@@ -132,8 +132,8 @@ export default class BookService {
   }
 
   // get the highest rated books
-  static async getHighestRatedBooks(maxResults: number) {
-    if (maxResults < 1) {
+  static async getHighestRatedBooks(limit: number = Constants.LIMIT) {
+    if (limit < 1) {
       return { statusCode: 204, books: {} };
     }
 
@@ -141,7 +141,7 @@ export default class BookService {
     const foundBooks = await Review.aggregate([
       { $group: { _id: '$book', book: { $first: '$book' }, averageRating: { $avg: '$stars' } } },
       { $sort: { averageRating: -1 } },
-      { $limit: maxResults },
+      { $limit: limit },
     ]);
 
     if (foundBooks.length === 0) {
@@ -156,7 +156,11 @@ export default class BookService {
   }
 
   // get most recently updated (user status) books (only returns unique books)
-  static async getRecentlyUpdatedBooks(maxResults: number, status?: number) {
+  static async getRecentlyUpdatedBooks(status?: number, limit: number = Constants.LIMIT) {
+    if (limit < 1) {
+      return { statusCode: 204, books: {} };
+    }
+
     let statusFilter = {};
 
     if (status) {
@@ -165,9 +169,9 @@ export default class BookService {
 
     const foundBooks = await Status.aggregate([
       { $match: statusFilter },
-      { $sort: { date: -1 } },
+      { $sort: { date: 1 } },
       { $group: { _id: '$book', book: { $first: '$book' }, date: { $first: '$date' } } },
-      { $limit: maxResults },
+      { $limit: limit },
     ]);
 
     if (foundBooks.length === 0) {
@@ -181,7 +185,11 @@ export default class BookService {
     return { statusCode: 200, books: foundBooks };
   }
 
-  static async getPopularBooks(maxResults: number, status?: number) {
+  static async getPopularBooks(status?: number, limit: number = Constants.LIMIT) {
+    if (limit < 1) {
+      return { statusCode: 204, books: {} };
+    }
+
     let statusFilter = {};
 
     if (status) {
@@ -195,7 +203,7 @@ export default class BookService {
       { $match: statusFilter },
       { $match: { date: { $gte: minDate } } },
       { $group: { _id: '$book', book: { $first: '$book' }, count: { $sum: 1 } } },
-      { $limit: maxResults },
+      { $limit: limit },
       { $sort: { count: -1 } },
     ]);
 

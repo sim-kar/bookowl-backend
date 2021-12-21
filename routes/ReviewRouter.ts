@@ -10,8 +10,8 @@ ReviewRouter.get('/', async (req, res) => {
 });
 
 // get a review by isbn and username
-ReviewRouter.get('/:isbn', async (req, res) => {
-  const payload = await ReviewService.getReview(req.params.isbn, req.body.username);
+ReviewRouter.get('/:username/book/:isbn', async (req, res) => {
+  const payload = await ReviewService.getReview(req.params.isbn, req.params.username);
   res.status(payload.statusCode).json(payload.review);
 });
 
@@ -38,8 +38,8 @@ ReviewRouter.put('/', async (req, res) => {
 });
 
 // delete review
-ReviewRouter.delete('/:isbn', async (req, res) => {
-  const payload = await ReviewService.deleteReview(req.params.isbn, req.body.username);
+ReviewRouter.delete('/:username/book/:isbn', async (req, res) => {
+  const payload = await ReviewService.deleteReview(req.params.isbn, req.params.username);
   res.status(payload.statusCode).json(payload.message);
 });
 
