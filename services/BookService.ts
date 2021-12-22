@@ -122,9 +122,6 @@ export default class BookService {
     const foundBook = await Book.findOne({ isbn }, ['-_id', '-__v']);
 
     if (!foundBook) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here:
-      // https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, book: {} };
     }
 
@@ -145,8 +142,6 @@ export default class BookService {
     ]);
 
     if (foundBooks.length === 0) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, books: {} };
     }
 
@@ -175,8 +170,6 @@ export default class BookService {
     ]);
 
     if (foundBooks.length === 0) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, books: {} };
     }
 
@@ -208,8 +201,6 @@ export default class BookService {
     ]);
 
     if (foundBooks.length === 0) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, books: {} };
     }
 

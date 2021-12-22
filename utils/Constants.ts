@@ -4,7 +4,7 @@ const Constants = {
   // regex used to validate email according to WHATWG standard:
   // https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
   EMAIL_REGEX: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-  // TODO: filepath to placeholder image for books without a thumbnail from public API
+  // filepath to placeholder image for books without a thumbnail from public API
   PLACEHOLDER_IMAGE: '../../assets/images/placeholder_cover.jpg',
   // field used to search by title in public api
   TITLE_FIELD: 'intitle',

@@ -19,8 +19,6 @@ export default class ReviewService {
       .populate({ path: 'book' });
 
     if (!foundReview) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, review: {} };
     }
 
@@ -75,8 +73,6 @@ export default class ReviewService {
     const foundReview = await Review.findOne({ isbn, username });
 
     if (!foundReview) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 404, message: { error: "Review doesn't exist." } };
     }
 
@@ -88,8 +84,6 @@ export default class ReviewService {
     try {
       await foundReview.save();
     } catch (error) {
-      // FIXME: is 500 Internal Sever Error the correct code? 'the server encountered an unexpected
-      //  condition that prevented it from fulfilling the request'
       return { statusCode: 500, message: { error: 'Unable to update review.' } };
     }
 
@@ -105,8 +99,6 @@ export default class ReviewService {
         return { statusCode: 404, message: { error: "Review doesn't exist." } };
       }
     } catch (error) {
-      // FIXME: is 500 Internal Sever Error the correct code? 'the server encountered an unexpected
-      //  condition that prevented it from fulfilling the request'
       return { statusCode: 500, message: { error: 'Unable to delete review.' } };
     }
 

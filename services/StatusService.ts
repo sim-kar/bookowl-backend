@@ -12,8 +12,6 @@ export default class StatusService {
       .populate({ path: 'book' });
 
     if (foundStatuses.length === 0) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, statuses: {} };
     }
 
@@ -26,8 +24,6 @@ export default class StatusService {
       .populate({ path: 'book' });
 
     if (!foundStatus) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 204, status: {} };
     }
 
@@ -75,8 +71,6 @@ export default class StatusService {
     const foundStatus = await Status.findOne({ isbn, username });
 
     if (!foundStatus) {
-      // FIXME: use 204 No Content with empty data instead of 404?
-      // see discussion here: https://stackoverflow.com/questions/11746894/what-is-the-proper-rest-response-code-for-a-valid-request-but-an-empty-data
       return { statusCode: 404, message: { error: "Status doesn't exist." } };
     }
 
@@ -86,8 +80,6 @@ export default class StatusService {
     try {
       await foundStatus.save();
     } catch (error) {
-      // FIXME: is 500 Internal Sever Error the correct code? 'the server encountered an unexpected
-      //  condition that prevented it from fulfilling the request'
       return { statusCode: 500, message: { error: 'Unable to update status.' } };
     }
 
@@ -103,8 +95,6 @@ export default class StatusService {
         return { statusCode: 404, message: { error: "Status doesn't exist." } };
       }
     } catch (error) {
-      // FIXME: is 500 Internal Sever Error the correct code? 'the server encountered an unexpected
-      //  condition that prevented it from fulfilling the request'
       return { statusCode: 500, message: { error: 'Unable to delete status.' } };
     }
 
