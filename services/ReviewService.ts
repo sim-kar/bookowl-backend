@@ -56,7 +56,6 @@ export default class ReviewService {
     try {
       await newReview.save();
     } catch (error) {
-      console.error(error);
       return { statusCode: 500, message: { error: 'Unable to add review.' } };
     }
 
