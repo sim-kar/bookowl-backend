@@ -196,8 +196,8 @@ export default class BookService {
       { $match: statusFilter },
       { $match: { date: { $gte: minDate } } },
       { $group: { _id: '$book', book: { $first: '$book' }, count: { $sum: 1 } } },
-      { $limit: limit },
       { $sort: { count: -1 } },
+      { $limit: limit },
     ]);
 
     if (foundBooks.length === 0) {
