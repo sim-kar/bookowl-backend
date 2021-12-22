@@ -164,8 +164,8 @@ export default class BookService {
 
     const foundBooks = await Status.aggregate([
       { $match: statusFilter },
-      { $sort: { date: 1 } },
-      { $group: { _id: '$book', book: { $first: '$book' }, date: { $first: '$date' } } },
+      { $group: { _id: '$book', book: { $first: '$book' }, date: { $max: '$date' } } },
+      { $sort: { date: -1 } },
       { $limit: limit },
     ]);
 
