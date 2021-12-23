@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import IStatus from '../services/IStatus';
-import Constants from '../utils/Constants';
 
 const statusSchema = new mongoose.Schema<IStatus>({
   isbn: { type: String, required: true },
@@ -11,7 +10,7 @@ const statusSchema = new mongoose.Schema<IStatus>({
     max: 2,
     required: true,
   },
-  date: { type: String, match: Constants.DATE_REGEX, required: true },
+  date: { type: Date, required: true },
   book: { type: mongoose.Schema.Types.ObjectId, ref: 'Book', required: true },
 });
 

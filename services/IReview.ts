@@ -6,6 +6,6 @@ export default interface IReview extends mongoose.Document {
   username: string;
   stars: number;
   text: string;
-  date: string;
+  date: Date;
   book: IBook;
 }

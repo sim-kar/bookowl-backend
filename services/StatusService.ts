@@ -1,7 +1,6 @@
 import Status from '../models/Status';
 import Book from '../models/Book';
 import User from '../models/User';
-import DateUtils from '../utils/DateUtils';
 import IBook from './IBook';
 import BookService from './BookService';
 
@@ -53,7 +52,7 @@ export default class StatusService {
       isbn,
       username,
       status,
-      date: DateUtils.formatDate(new Date()),
+      date: new Date(),
       book: foundBook._id,
     });
 
@@ -75,7 +74,7 @@ export default class StatusService {
     }
 
     foundStatus.status = status;
-    foundStatus.date = DateUtils.formatDate(new Date());
+    foundStatus.date = new Date();
 
     try {
       await foundStatus.save();

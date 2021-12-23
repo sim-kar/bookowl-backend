@@ -190,7 +190,7 @@ export default class BookService {
     }
 
     // status updates before this date doesn't affect popular ranking
-    const minDate = DateUtils.formatDate(DateUtils.getRelativeDate(Constants.POPULAR_DATE_CUTOFF));
+    const minDate = DateUtils.getRelativeDate(Constants.POPULAR_DATE_CUTOFF);
 
     const foundBooks = await Status.aggregate([
       { $match: statusFilter },

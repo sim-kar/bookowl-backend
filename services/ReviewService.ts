@@ -1,7 +1,6 @@
 import Book from '../models/Book';
 import Review from '../models/Review';
 import User from '../models/User';
-import DateUtils from '../utils/DateUtils';
 
 export default class ReviewService {
   // get all reviews
@@ -48,8 +47,7 @@ export default class ReviewService {
       username,
       stars,
       text,
-      // get the date in yyyy-mm-dd format
-      date: DateUtils.formatDate(new Date()),
+      date: new Date(),
       book: foundBook._id,
     });
 
@@ -75,8 +73,7 @@ export default class ReviewService {
       return { statusCode: 404, message: { error: "Review doesn't exist." } };
     }
 
-    // get date in yyyy-mm-dd format
-    foundReview.date = DateUtils.formatDate(new Date());
+    foundReview.date = new Date();
     foundReview.stars = stars;
     foundReview.text = text;
 

@@ -1,5 +1,4 @@
 import User from '../models/User';
-import DateUtils from '../utils/DateUtils';
 
 export default class UserService {
   // get user by username
@@ -31,8 +30,8 @@ export default class UserService {
       email,
       password,
       gender,
-      birthdate,
-      joined: DateUtils.formatDate(new Date()),
+      birthdate: new Date(birthdate),
+      joined: new Date(),
     });
 
     try {

@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import IReview from '../services/IReview';
-import Constants from '../utils/Constants';
 
 const reviewSchema = new mongoose.Schema<IReview>({
   isbn: { type: String, required: true },
@@ -12,7 +11,7 @@ const reviewSchema = new mongoose.Schema<IReview>({
     required: true,
   },
   text: String,
-  date: { type: String, match: Constants.DATE_REGEX, required: true },
+  date: { type: Date, required: true },
   book: { type: mongoose.Schema.Types.ObjectId, ref: 'Book', required: true },
 });
 
