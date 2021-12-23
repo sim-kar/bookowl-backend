@@ -8,7 +8,7 @@ const bookSchema = new mongoose.Schema<IBook>({
   authors: { type: [String], required: true },
   cover: { type: String, required: true },
   pages: { type: Number, required: true },
-  published: { type: String, match: Constants.DATE_REGEX, required: true },
+  published: { type: String, match: Constants.PUBLISHED_DATE_REGEX, required: true },
   publisher: { type: String, required: true },
   language: { type: String, required: true },
   description: { type: String, required: true },
