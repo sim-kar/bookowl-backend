@@ -1,11 +1,11 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import BookService from '../services/BookService';
 import NumberUtils from '../utils/NumberUtils';
 
 const BookRouter = express.Router();
 
 // search for books by title
-BookRouter.get('/title/:title', async (req, res) => {
+BookRouter.get('/title/:title', async (req: Request, res: Response) => {
   // convert optional parameter to number if it exists
   const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
 
@@ -16,7 +16,7 @@ BookRouter.get('/title/:title', async (req, res) => {
 });
 
 // search for books by author
-BookRouter.get('/author/:author', async (req, res) => {
+BookRouter.get('/author/:author', async (req: Request, res: Response) => {
   // convert optional parameter to number if it exists
   const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
 
@@ -27,7 +27,7 @@ BookRouter.get('/author/:author', async (req, res) => {
 });
 
 // get the highest rated books
-BookRouter.get('/highest-rated', async (req, res) => {
+BookRouter.get('/highest-rated', async (req: Request, res: Response) => {
   const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
 
   const payload = await BookService.getHighestRatedBooks(limit);
@@ -35,7 +35,7 @@ BookRouter.get('/highest-rated', async (req, res) => {
 });
 
 // get the most recently updated books
-BookRouter.get('/recently-updated', async (req, res) => {
+BookRouter.get('/recently-updated', async (req: Request, res: Response) => {
   const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
   const statusFilter = NumberUtils.getNumberOrUndefined(req.query.statusFilter);
 
@@ -44,7 +44,7 @@ BookRouter.get('/recently-updated', async (req, res) => {
 });
 
 // get the most popular books
-BookRouter.get('/popular', async (req, res) => {
+BookRouter.get('/popular', async (req: Request, res: Response) => {
   const limit = NumberUtils.getNumberOrUndefined(req.query.limit);
   const statusFilter = NumberUtils.getNumberOrUndefined(req.query.statusFilter);
 
@@ -53,13 +53,13 @@ BookRouter.get('/popular', async (req, res) => {
 });
 
 // get a book
-BookRouter.get('/:isbn', async (req, res) => {
+BookRouter.get('/:isbn', async (req: Request, res: Response) => {
   const payload = await BookService.getBook(req.params.isbn);
   res.status(payload.statusCode).json(payload.book);
 });
 
 // post a book
-BookRouter.post('/', async (req, res) => {
+BookRouter.post('/', async (req: Request, res: Response) => {
   const payload = await BookService.addBook(req.body);
   res.status(payload.statusCode).json(payload.message);
 });
