@@ -3,7 +3,12 @@ import IBook from '../services/IBook';
 import Constants from '../utils/Constants';
 
 const bookSchema = new mongoose.Schema<IBook>({
-  isbn: { type: String, index: true, unique: true },
+  isbn: {
+    type: String,
+    index: true,
+    unique: true,
+    required: true,
+  },
   title: { type: String, required: true },
   authors: { type: [String], required: true },
   cover: { type: String, required: true },
