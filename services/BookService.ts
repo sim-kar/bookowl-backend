@@ -8,15 +8,15 @@ import DateUtils from '../utils/DateUtils';
 
 export default class BookService {
   static async searchBooksByTitle(title: string, limit: number = Constants.LIMIT) {
-    return BookService.#searchBook(title, Constants.TITLE_FIELD, limit);
+    return BookService.searchBook(title, Constants.TITLE_FIELD, limit);
   }
 
   static async searchBooksByAuthor(author: string, limit: number = Constants.LIMIT) {
-    return BookService.#searchBook(author, Constants.AUTHOR_FIELD, limit);
+    return BookService.searchBook(author, Constants.AUTHOR_FIELD, limit);
   }
 
   // helper method to search for books using an open api (google books)
-  static #searchBook(keyword: string, field: string, limit: number) {
+  private static searchBook(keyword: string, field: string, limit: number) {
     const options = {
       hostname: 'www.googleapis.com',
       path: `/books/v1/volumes?q=${field}:${encodeURI(keyword)}&maxResults=`
@@ -45,12 +45,12 @@ export default class BookService {
 
           foundBooks.forEach((book: any) => {
             // validate the data. Some results from google books lack the necessary keys
-            if (this.#validateBookData(book.volumeInfo)) {
+            if (this.validateBookData(book.volumeInfo)) {
               books.push(<IBook>{
-                isbn: BookService.#getIdentifier(book.volumeInfo.industryIdentifiers),
+                isbn: BookService.getIdentifier(book.volumeInfo.industryIdentifiers),
                 title: book.volumeInfo.title,
                 authors: book.volumeInfo.authors,
-                cover: BookService.#getCover(book.volumeInfo.imageLinks),
+                cover: BookService.getCover(book.volumeInfo.imageLinks),
                 pages: book.volumeInfo.pageCount,
                 published: book.volumeInfo.publishedDate,
                 publisher: book.volumeInfo.publisher,
@@ -69,7 +69,7 @@ export default class BookService {
     });
   }
 
-  static #validateBookData(data: any): boolean {
+  private static validateBookData(data: any): boolean {
     // imageLinks are allowed to be absent
     const requiredKeys = [
       'industryIdentifiers',
@@ -93,7 +93,7 @@ export default class BookService {
     return valid;
   }
 
-  static #getIdentifier(identifiers: [{ type: string, identifier: string }]) {
+  private static getIdentifier(identifiers: [{ type: string, identifier: string }]) {
     // prefer isbn13 > isbn10 > other
     let foundIdentifier = identifiers.find((id) => id.type === 'ISBN_13');
 
@@ -108,7 +108,7 @@ export default class BookService {
     return foundIdentifier.identifier;
   }
 
-  static #getCover(images: any) {
+  private static getCover(images: any) {
     if (!images) {
       return Constants.PLACEHOLDER_IMAGE;
     }
