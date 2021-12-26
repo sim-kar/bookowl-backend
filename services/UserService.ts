@@ -1,3 +1,6 @@
+import argon2 from 'argon2';
+import jwt from 'jsonwebtoken';
+import config from 'config';
 import User from '../models/User';
 
 export default class UserService {
@@ -21,6 +24,7 @@ export default class UserService {
     gender: string,
     birthdate: string,
   ) {
+    // FIXME: split into two different checks?
     if (await User.exists({ $or: [{ username }, { email }] })) {
       return { statusCode: 409, message: { error: 'Username or email already exists.' } };
     }
@@ -28,7 +32,7 @@ export default class UserService {
     const newUser = new User({
       username,
       email,
-      password,
+      password: await argon2.hash(password, { type: argon2.argon2id }),
       gender,
       birthdate: new Date(birthdate),
       joined: new Date(),
@@ -41,6 +45,48 @@ export default class UserService {
     }
 
     return { statusCode: 201, message: { message: 'Added user.' } };
+  }
+
+  static async logIn(username: string, password: string) {
+    const foundUser = await User.findOne({ username });
+
+    if (!foundUser) {
+      return {
+        statusCode: 404,
+        accessToken: null,
+        username: null,
+        message: { error: "User doesn't exist." },
+      };
+    }
+
+    const validPassword = await argon2.verify(
+      foundUser.password,
+      password,
+      { type: argon2.argon2id },
+    );
+
+    if (!validPassword) {
+      return {
+        statusCode: 401,
+        accessToken: null,
+        username: null,
+        message: { error: 'Password is invalid.' },
+      };
+    }
+
+    const secret: string = config.get('jwt.secret');
+    const token = jwt.sign(
+      { username: foundUser.username },
+      secret,
+      { expiresIn: 86400 }, // 24 hours
+    );
+
+    return {
+      statusCode: 200,
+      accessToken: token,
+      username,
+      message: { message: 'Successfully logged in.' },
+    };
   }
 
   // update a user (e-mail or password)
@@ -60,7 +106,7 @@ export default class UserService {
     }
 
     foundUser.email = email;
-    foundUser.password = password;
+    foundUser.password = await argon2.hash(password, { type: argon2.argon2id });
 
     try {
       await foundUser.save();
@@ -68,6 +114,6 @@ export default class UserService {
       return { statusCode: 500, message: { error: 'Unable to update user.' } };
     }
 
-    return { statusCode: 200, message: { message: 'Updated user' } };
+    return { statusCode: 200, message: { message: 'Updated user.' } };
   }
 }
