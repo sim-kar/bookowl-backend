@@ -22,6 +22,21 @@ UserRouter.post('/', async (req: Request, res: Response) => {
   res.status(payload.statusCode).json(payload.message);
 });
 
+// log in
+UserRouter.post('/login', async (req: Request, res: Response) => {
+  const payload = await UserService.logIn(
+    req.body.username,
+    req.body.password,
+  );
+  res.status(payload.statusCode).json({
+    accessToken: payload.accessToken,
+    username: payload.username,
+    message: payload.message,
+  });
+});
+
+// ROUTES THAT REQUIRE AUTHORIZATION
+
 // put user
 UserRouter.put('/', [
   verifyToken,
@@ -34,17 +49,5 @@ UserRouter.put('/', [
     res.status(payload.statusCode).json(payload.message);
   },
 ]);
-
-// log in
-UserRouter.post('/login', async (req: Request, res: Response) => {
-  const payload = await UserService.logIn(
-    req.body.username,
-    req.body.password,
-  );
-  res.status(payload.statusCode).json({
-    accessToken: payload.accessToken,
-    username: payload.username,
-  });
-});
 
 export default UserRouter;
