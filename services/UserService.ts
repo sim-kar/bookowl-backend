@@ -24,9 +24,12 @@ export default class UserService {
     gender: string,
     birthdate: string,
   ) {
-    // FIXME: split into two different checks?
-    if (await User.exists({ $or: [{ username }, { email }] })) {
-      return { statusCode: 409, message: { error: 'Username or email already exists.' } };
+    if (await User.exists({ username })) {
+      return { statusCode: 409, message: { error: 'Username already exists.' } };
+    }
+
+    if (await User.exists({ email })) {
+      return { statusCode: 409, message: { error: 'E-mail already exists.' } };
     }
 
     const newUser = new User({
