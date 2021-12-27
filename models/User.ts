@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema<IUser>({
     type: String,
     index: true,
     unique: true,
+    minlength: 2,
+    maxlength: 20,
     required: true,
   },
   email: {
@@ -15,7 +17,7 @@ const userSchema = new mongoose.Schema<IUser>({
     unique: true,
     required: true,
   },
-  password: { type: String, required: true },
+  password: { type: String, minlength: 8, required: true },
   gender: { type: String, enum: ['male', 'female', 'other', 'private'], required: true },
   birthdate: { type: Date, required: true },
   joined: { type: Date, required: true },
