@@ -19,6 +19,8 @@ StatusRouter.get('/:username/book/:isbn', async (req: Request, res: Response) =>
   res.status(payload.statusCode).json(payload.status);
 });
 
+// ROUTES THAT REQUIRE AUTHORIZATION
+
 // post status
 StatusRouter.post('/', [
   verifyToken,

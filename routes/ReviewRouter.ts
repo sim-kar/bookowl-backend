@@ -16,6 +16,8 @@ ReviewRouter.get('/:username/book/:isbn', async (req: Request, res: Response) =>
   res.status(payload.statusCode).json(payload.review);
 });
 
+// ROUTES THAT REQUIRE AUTHORIZATION
+
 // post review
 ReviewRouter.post('/', [
   verifyToken,
