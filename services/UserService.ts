@@ -79,9 +79,10 @@ export default class UserService {
 
     const secret: string = config.get('jwt.secret');
     const token = jwt.sign(
-      { username: foundUser.username },
+      {},
       secret,
-      { expiresIn: 86400 }, // 24 hours
+      // expiration time 24 hours
+      { expiresIn: 86400, subject: username },
     );
 
     return {
