@@ -12,6 +12,18 @@ export default class ReviewService {
     };
   }
 
+  // get all reviews for a book by isbn
+  static async getReviewsForBook(isbn: string) {
+    const foundReviews = await Review.find({ isbn }, ['-_id', '-__v'])
+      .populate({ path: 'book' });
+
+    if (foundReviews.length === 0) {
+      return { statusCode: 204, reviews: {} };
+    }
+
+    return { statusCode: 200, reviews: foundReviews };
+  }
+
   // get a review by isbn and username
   static async getReview(isbn: string, username: string) {
     const foundReview = await Review.findOne({ isbn, username }, ['-_id', '-__v'])

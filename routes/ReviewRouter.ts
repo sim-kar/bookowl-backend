@@ -10,6 +10,12 @@ ReviewRouter.get('/', async (req: Request, res: Response) => {
   res.status(payload.statusCode).json(payload.reviews);
 });
 
+// get reviews by isbn
+ReviewRouter.get('/:isbn', async (req: Request, res: Response) => {
+  const payload = await ReviewService.getReviewsForBook(req.params.isbn);
+  res.status(payload.statusCode).json(payload.reviews);
+});
+
 // get a review by isbn and username
 ReviewRouter.get('/:username/book/:isbn', async (req: Request, res: Response) => {
   const payload = await ReviewService.getReview(req.params.isbn, req.params.username);
