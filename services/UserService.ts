@@ -6,8 +6,8 @@ import User from '../models/User';
 export default class UserService {
   // get user by username
   static async getUser(username: string) {
-    // don't return the password
-    const foundUser = await User.findOne({ username }, ['-_id', '-__v', '-password']);
+    // don't return the password and email, its sensitive information
+    const foundUser = await User.findOne({ username }, ['-_id', '-__v', '-password', '-email']);
 
     if (!foundUser) {
       return { statusCode: 204, user: {} };
@@ -93,31 +93,88 @@ export default class UserService {
     };
   }
 
-  // update a user (e-mail or password)
-  static async updateUser(username: string, email: string, password: string) {
+  // returns censored email address
+  static async getUserEmail(username: string) {
+    const foundUser = await User.findOne({ username });
+
+    if (!foundUser) {
+      return { statusCode: 204, email: {} };
+    }
+
+    // censor the last half
+    const localPartLength = foundUser.email.indexOf('@');
+    const half = Math.floor(localPartLength / 2);
+
+    const email = foundUser.email.substring(0, half)
+      + '*'.repeat(3)
+      + foundUser.email.substring(localPartLength);
+
+    return { statusCode: 200, email };
+  }
+
+  // update a users email
+  static async updateUserEmail(username: string, email: string, password: string) {
     const foundUser = await User.findOne({ username });
 
     if (!foundUser) {
       return { statusCode: 404, message: { error: "User doesn't exist." } };
     }
 
-    // make sure the email doesn't already exist if updating the email
-    if (foundUser.email !== email) {
-      // check if another user is already using new email
-      if (await User.exists({ username: { $ne: username }, email })) {
-        return { statusCode: 409, message: { error: 'E-mail already exist.' } };
-      }
+    // validate password
+    const validPassword = await argon2.verify(
+      foundUser.password,
+      password,
+      { type: argon2.argon2id },
+    );
+
+    if (!validPassword) {
+      return { statusCode: 401, message: { error: 'Password is invalid.' } };
+    }
+
+    // check if another user is already using new email
+    if (await User.exists({ username: { $ne: username }, email })) {
+      return { statusCode: 409, message: { error: 'E-mail already exist.' } };
     }
 
     foundUser.email = email;
-    foundUser.password = await argon2.hash(password, { type: argon2.argon2id });
 
     try {
       await foundUser.save();
     } catch (error) {
-      return { statusCode: 500, message: { error: 'Unable to update user.' } };
+      return { statusCode: 500, message: { error: 'Unable to update email.' } };
     }
 
-    return { statusCode: 200, message: { message: 'Updated user.' } };
+    return { statusCode: 200, message: { message: 'Updated email.' } };
+  }
+
+  // update a users password
+  static async updateUserPassword(username: string, newPassword: string, password: string) {
+    const foundUser = await User.findOne({ username });
+
+    if (!foundUser) {
+      return { statusCode: 404, message: { error: "User doesn't exist." } };
+    }
+
+    // validate password
+    const validPassword = await argon2.verify(
+      foundUser.password,
+      password,
+      { type: argon2.argon2id },
+    );
+
+    if (!validPassword) {
+      return { statusCode: 401, message: { error: 'Password is invalid.' } };
+    }
+
+    // add new password
+    foundUser.password = await argon2.hash(newPassword, { type: argon2.argon2id });
+
+    try {
+      await foundUser.save();
+    } catch (error) {
+      return { statusCode: 500, message: { error: 'Unable to update password.' } };
+    }
+
+    return { statusCode: 200, message: { message: 'Updated password.' } };
   }
 }

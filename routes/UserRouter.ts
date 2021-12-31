@@ -37,14 +37,36 @@ UserRouter.post('/login', async (req: Request, res: Response) => {
 
 // ROUTES THAT REQUIRE AUTHORIZATION
 
-// put user
-UserRouter.put('/', [
+// get a user email
+UserRouter.get('/:username/email', [
   verifyToken,
   async (req: Request, res: Response) => {
-    const payload = await UserService.updateUser(
+    const payload = await UserService.getUserEmail(req.params.username);
+    res.status(payload.statusCode).json(payload.email);
+  },
+]);
+
+// put user email
+UserRouter.put('/email', [
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const payload = await UserService.updateUserEmail(
       req.body.username,
       req.body.email,
       req.body.password,
+    );
+    res.status(payload.statusCode).json(payload.message);
+  },
+]);
+
+// put user password
+UserRouter.put('/password', [
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const payload = await UserService.updateUserPassword(
+      req.body.username,
+      req.body.newPassword,
+      req.body.oldPassword,
     );
     res.status(payload.statusCode).json(payload.message);
   },
