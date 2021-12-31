@@ -7,7 +7,7 @@ export default class ReviewService {
   static async getReviews() {
     return {
       statusCode: 200,
-      reviews: await Review.find({}, ['-_id', '-__v'])
+      reviews: await Review.find({}, ['-_id', '-__v'], { sort: { date: -1 } })
         .populate({ path: 'book' }),
     };
   }
