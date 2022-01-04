@@ -4,19 +4,19 @@ import verifyToken from '../middlewares/verifyToken';
 
 const ReviewRouter = express.Router();
 
-// get all reviews --need at least one 'get all' for project
+/** Get all reviews */
 ReviewRouter.get('/', async (req: Request, res: Response) => {
   const payload = await ReviewService.getReviews();
   res.status(payload.statusCode).json(payload.reviews);
 });
 
-// get reviews by isbn
+/** Get reviews by ISBN */
 ReviewRouter.get('/:isbn', async (req: Request, res: Response) => {
   const payload = await ReviewService.getReviewsForBook(req.params.isbn);
   res.status(payload.statusCode).json(payload.reviews);
 });
 
-// get a review by isbn and username
+/** Get a review by ISBN and username */
 ReviewRouter.get('/:username/book/:isbn', async (req: Request, res: Response) => {
   const payload = await ReviewService.getReview(req.params.isbn, req.params.username);
   res.status(payload.statusCode).json(payload.review);
@@ -24,7 +24,7 @@ ReviewRouter.get('/:username/book/:isbn', async (req: Request, res: Response) =>
 
 // ROUTES THAT REQUIRE AUTHORIZATION
 
-// post review
+/** Post a review */
 ReviewRouter.post('/', [
   verifyToken,
   async (req: Request, res: Response) => {
@@ -38,7 +38,7 @@ ReviewRouter.post('/', [
   },
 ]);
 
-// put review
+/** Update a review */
 ReviewRouter.put('/', [
   verifyToken,
   async (req: Request, res: Response) => {
@@ -52,7 +52,7 @@ ReviewRouter.put('/', [
   },
 ]);
 
-// delete review
+/** Delete a review */
 ReviewRouter.delete('/:username/book/:isbn', [
   verifyToken,
   async (req: Request, res: Response) => {

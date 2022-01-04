@@ -2,8 +2,13 @@ import Book from '../models/Book';
 import Review from '../models/Review';
 import User from '../models/User';
 
+/** Provides access to reviews in the database. */
 export default class ReviewService {
-  // get all reviews
+  /**
+   * Get all reviews.
+   *
+   * @returns the HTTP status code and reviews.
+   */
   static async getReviews() {
     return {
       statusCode: 200,
@@ -12,7 +17,12 @@ export default class ReviewService {
     };
   }
 
-  // get all reviews for a book by isbn
+  /**
+   * Get all reviews for a book.
+   *
+   * @param isbn the book's ISBN.
+   * @returns the HTTP status code and reviews.
+   */
   static async getReviewsForBook(isbn: string) {
     const foundReviews = await Review.find({ isbn }, ['-_id', '-__v'])
       .populate({ path: 'book' });
@@ -24,7 +34,12 @@ export default class ReviewService {
     return { statusCode: 200, reviews: foundReviews };
   }
 
-  // get a review by isbn and username
+  /**
+   * Get a review.
+   *
+   * @param isbn the ISBN of the book.
+   * @param username the username of the user.
+   */
   static async getReview(isbn: string, username: string) {
     const foundReview = await Review.findOne({ isbn, username }, ['-_id', '-__v'])
       .populate({ path: 'book' });
@@ -36,7 +51,15 @@ export default class ReviewService {
     return { statusCode: 200, review: foundReview };
   }
 
-  // add a review
+  /**
+   * Add a review.
+   *
+   * @param isbn the book's ISBN.
+   * @param username the user's username.
+   * @param stars the rating (0-5).
+   * @param text the review's text.
+   * @returns the HTTP status code and result message.
+   */
   static async addReview(
     isbn: string,
     username: string,
@@ -72,7 +95,15 @@ export default class ReviewService {
     return { statusCode: 201, message: { message: 'Added review.' } };
   }
 
-  // update review
+  /**
+   * Update a review.
+   *
+   * @param isbn the book's ISBN.
+   * @param username the user's username.
+   * @param stars the rating (0-5).
+   * @param text the review's text.
+   * @returns the HTTP status code and result message.
+   */
   static async updateReview(
     isbn: string,
     username: string,
@@ -98,7 +129,13 @@ export default class ReviewService {
     return { statusCode: 200, message: { message: 'Updated review' } };
   }
 
-  // delete review
+  /**
+   * Delete a review.
+   *
+   * @param isbn the book's isbn.
+   * @param username the user's username.
+   * @returns the HTTP status code and result message.
+   */
   static async deleteReview(isbn: string, username: string) {
     try {
       const deletedReview = await Review.findOneAndDelete({ isbn, username });

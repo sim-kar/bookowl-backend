@@ -4,13 +4,13 @@ import verifyToken from '../middlewares/verifyToken';
 
 const UserRouter = express.Router();
 
-// get a user
+/* Get a user */
 UserRouter.get('/:username', async (req: Request, res: Response) => {
   const payload = await UserService.getUser(req.params.username);
   res.status(payload.statusCode).json(payload.user);
 });
 
-// post user
+/* Post a user */
 UserRouter.post('/', async (req: Request, res: Response) => {
   const payload = await UserService.addUser(
     req.body.username,
@@ -22,7 +22,7 @@ UserRouter.post('/', async (req: Request, res: Response) => {
   res.status(payload.statusCode).json(payload.message);
 });
 
-// log in
+/* User log in */
 UserRouter.post('/login', async (req: Request, res: Response) => {
   const payload = await UserService.logIn(
     req.body.username,
@@ -37,7 +37,7 @@ UserRouter.post('/login', async (req: Request, res: Response) => {
 
 // ROUTES THAT REQUIRE AUTHORIZATION
 
-// get a user email
+/* Get a user's email */
 UserRouter.get('/:username/email', [
   verifyToken,
   async (req: Request, res: Response) => {
@@ -46,7 +46,7 @@ UserRouter.get('/:username/email', [
   },
 ]);
 
-// put user email
+/* Update a user's email */
 UserRouter.put('/email', [
   verifyToken,
   async (req: Request, res: Response) => {
@@ -59,7 +59,7 @@ UserRouter.put('/email', [
   },
 ]);
 
-// put user password
+/* update a user's password */
 UserRouter.put('/password', [
   verifyToken,
   async (req: Request, res: Response) => {

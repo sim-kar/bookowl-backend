@@ -5,7 +5,7 @@ import verifyToken from '../middlewares/verifyToken';
 
 const StatusRouter = express.Router();
 
-// get statuses for a user
+/** Get a user's statuses by status code */
 StatusRouter.get('/:username/status/:status', async (req: Request, res: Response) => {
   const status = NumberUtils.getNumber(req.params.status);
 
@@ -13,7 +13,7 @@ StatusRouter.get('/:username/status/:status', async (req: Request, res: Response
   res.status(payload.statusCode).json(payload.statuses);
 });
 
-// get a status by isbn and username
+/** Get a status by ISBN and username */
 StatusRouter.get('/:username/book/:isbn', async (req: Request, res: Response) => {
   const payload = await StatusService.getStatus(req.params.isbn, req.params.username);
   res.status(payload.statusCode).json(payload.status);
@@ -21,7 +21,7 @@ StatusRouter.get('/:username/book/:isbn', async (req: Request, res: Response) =>
 
 // ROUTES THAT REQUIRE AUTHORIZATION
 
-// post status
+/** Post a status */
 StatusRouter.post('/', [
   verifyToken,
   async (req: Request, res: Response) => {
@@ -35,7 +35,7 @@ StatusRouter.post('/', [
   },
 ]);
 
-// put status
+/** Update a status */
 StatusRouter.put('/', [
   verifyToken,
   async (req: Request, res: Response) => {
@@ -48,7 +48,7 @@ StatusRouter.put('/', [
   },
 ]);
 
-// delete status
+/** Delete a status */
 StatusRouter.delete('/:username/book/:isbn', [
   verifyToken,
   async (req: Request, res: Response) => {

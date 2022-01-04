@@ -6,16 +6,39 @@ import Constants from '../utils/Constants';
 import Status from '../models/Status';
 import DateUtils from '../utils/DateUtils';
 
+/** Provides access to books in database, or books from the Google Books API. */
 export default class BookService {
+  /**
+   * Searches Google Books for books with the provided title.
+   *
+   * @param title the title to search for.
+   * @param limit the maximum amount of results to get.
+   * @returns the HTTP status code and found books.
+   */
   static async searchBooksByTitle(title: string, limit: number = Constants.LIMIT) {
     return BookService.searchBook(title, Constants.TITLE_FIELD, limit);
   }
 
+  /**
+   * Searches Google Books for books by the provided author.
+   *
+   * @param author the author to search for.
+   * @param limit the maximum amount of results to get.
+   * @returns the HTTP status code and found books.
+   */
   static async searchBooksByAuthor(author: string, limit: number = Constants.LIMIT) {
     return BookService.searchBook(author, Constants.AUTHOR_FIELD, limit);
   }
 
-  // helper method to search for books using an open api (google books)
+  /**
+   * Helper method to search for books using Google Books API.
+   *
+   * @param keyword the keyword to search for.
+   * @param field the field to search in.
+   * @param limit the maximum amount of results to get.
+   * @returns the HTTP status code and found books.
+   * @private
+   */
   private static searchBook(keyword: string, field: string, limit: number) {
     const options = {
       hostname: 'www.googleapis.com',
@@ -69,6 +92,14 @@ export default class BookService {
     });
   }
 
+  /**
+   * Helper method to validate book data from Google Books API; the data object must contain all
+   * required keys to be valid.
+   *
+   * @param data the data returned by the API.
+   * @returns whether data was valid or not.
+   * @private
+   */
   private static validateBookData(data: any): boolean {
     // imageLinks are allowed to be absent
     const requiredKeys = [
@@ -93,6 +124,15 @@ export default class BookService {
     return valid;
   }
 
+  /**
+   * Get the industry identifier of a book from Google Books API. The preferred identifier is
+   * ISBN13, followed by ISBN10; if both are unavailable whatever identifier is present will be
+   * returned.
+   *
+   * @param identifiers the industry identifier codes of a book from Google Books.
+   * @returns the identifier in the most preferred available format.
+   * @private
+   */
   private static getIdentifier(identifiers: [{ type: string, identifier: string }]) {
     // prefer isbn13 > isbn10 > other
     let foundIdentifier = identifiers.find((id) => id.type === 'ISBN_13');
@@ -108,6 +148,14 @@ export default class BookService {
     return foundIdentifier.identifier;
   }
 
+  /**
+   * Get the URL for a book's cover. If no cover is available the URL of a placeholder image
+   * will be returned instead.
+   *
+   * @param images the image links of a book from Google Books.
+   * @returns the link to an image of the book's cover.
+   * @private
+   */
   private static getCover(images: any) {
     if (!images) {
       return Constants.PLACEHOLDER_IMAGE;
@@ -117,7 +165,12 @@ export default class BookService {
     return images.thumbnail.replace('&edge=curl', '');
   }
 
-  // get book by isbn
+  /**
+   * Get a book by its ISBN.
+   *
+   * @param isbn the book's ISBN.
+   * @ returns the HTTP status code and book.
+   */
   static async getBook(isbn: string) {
     const foundBook = await Book.findOne({ isbn }, ['-_id', '-__v']);
 
@@ -128,7 +181,12 @@ export default class BookService {
     return { statusCode: 200, book: foundBook };
   }
 
-  // get the highest rated books
+  /**
+   * Get the highest rated books, sorted in descending order.
+   *
+   * @param limit the maximum amount of results to get.
+   * @ returns the HTTP status code and books.
+   */
   static async getHighestRatedBooks(limit: number = Constants.LIMIT) {
     if (limit < 1) {
       return { statusCode: 204, books: {} };
@@ -150,7 +208,14 @@ export default class BookService {
     return { statusCode: 200, books: foundBooks };
   }
 
-  // get most recently updated (user status) books (only returns unique books)
+  /**
+   * Get the most recently updated (i.e. user status added or changed) books, in descending order.
+   * Only returns unique books.
+   *
+   * @param status only get books with this user status (optional).
+   * @param limit the maximum amount of results to get.
+   * @returns the HTTP status code and books.
+   */
   static async getRecentlyUpdatedBooks(status?: number, limit: number = Constants.LIMIT) {
     if (limit < 1) {
       return { statusCode: 204, books: {} };
@@ -178,6 +243,14 @@ export default class BookService {
     return { statusCode: 200, books: foundBooks };
   }
 
+  /**
+   * Get the most popular books, in descending order. Popularity is decided by how often a book has
+   * been updated (i.e. user status added or changed) within a recent timespan.
+   *
+   * @param status only get books with this user status (optional).
+   * @param limit the maximum amount of results to get.
+   * @returns the HTTP status code and books.
+   */
   static async getPopularBooks(status?: number, limit: number = Constants.LIMIT) {
     if (limit < 1) {
       return { statusCode: 204, books: {} };
@@ -209,7 +282,12 @@ export default class BookService {
     return { statusCode: 200, books: foundBooks };
   }
 
-  // add book
+  /**
+   * Add a book.
+   *
+   * @param reqBook the book to add.
+   * @returns the HTTP status code and result message.
+   */
   static async addBook(reqBook: IBook) {
     if (await Book.exists({ isbn: reqBook.isbn })) {
       return { statusCode: 409, message: { error: 'Book already exists.' } };

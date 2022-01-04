@@ -3,8 +3,14 @@ import jwt from 'jsonwebtoken';
 import config from 'config';
 import User from '../models/User';
 
+/** Provides access to users in the database. */
 export default class UserService {
-  // get user by username
+  /**
+   * Get a user.
+   *
+   * @param username the user's username.
+   * @returns the HTTP status code and user.
+   */
   static async getUser(username: string) {
     // don't return the password and email, its sensitive information
     const foundUser = await User.findOne({ username }, ['-_id', '-__v', '-password', '-email']);
@@ -16,7 +22,16 @@ export default class UserService {
     return { statusCode: 200, user: foundUser };
   }
 
-  // add a new user
+  /**
+   * Add a user.
+   *
+   * @param username the username.
+   * @param email the email.
+   * @param password the password.
+   * @param gender the gender.
+   * @param birthdate the birthdate.
+   * @returns the HTTP status code and result message.
+   */
   static async addUser(
     username: string,
     email: string,
@@ -50,6 +65,13 @@ export default class UserService {
     return { statusCode: 201, message: { message: 'Added user.' } };
   }
 
+  /**
+   * Authenticate a user for log in.
+   *
+   * @param username the user's username.
+   * @param password the user's password.
+   * @returns the HTTP status code, access token, username, and result message.
+   */
   static async logIn(username: string, password: string) {
     const foundUser = await User.findOne({ username });
 
@@ -93,7 +115,13 @@ export default class UserService {
     };
   }
 
-  // returns censored email address
+  /**
+   * Get a user's email address. Since it is sensitive information,
+   * the returned address is censored.
+   *
+   * @param username the user's username.
+   * @returns the censored email.
+   */
   static async getUserEmail(username: string) {
     const foundUser = await User.findOne({ username });
 
@@ -112,7 +140,14 @@ export default class UserService {
     return { statusCode: 200, email };
   }
 
-  // update a users email
+  /**
+   * Updates a user's email address. The user's password is required for authentication.
+   *
+   * @param username the user's username.
+   * @param email the new email.
+   * @param password the user's password.
+   * @returns the HTTP status code and result message.
+   */
   static async updateUserEmail(username: string, email: string, password: string) {
     const foundUser = await User.findOne({ username });
 
@@ -147,7 +182,13 @@ export default class UserService {
     return { statusCode: 200, message: { message: 'Updated email.' } };
   }
 
-  // update a users password
+  /**
+   * Update a user's password. The old password is required for authentication.
+   *
+   * @param username the user's username.
+   * @param newPassword the new password.
+   * @param password the user's current password.
+   */
   static async updateUserPassword(username: string, newPassword: string, password: string) {
     const foundUser = await User.findOne({ username });
 

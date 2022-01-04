@@ -2,6 +2,13 @@ import jwt from 'jsonwebtoken';
 import config from 'config';
 import { Request, Response } from 'express';
 
+/**
+ * Verifies a JSON Web Token to make sure the request is authorized to use the route.
+ *
+ * @param req the request object
+ * @param res the response object
+ * @param next the next middleware function
+ */
 export default function verifyToken(req: Request, res: Response, next: Function) {
   const token: string = <string>req.headers['x-access-token'];
   const secret: string = config.get('jwt.secret');
