@@ -8,3 +8,6 @@ npm-debug.log
 /http-requests/
 /REQUIREMENTS.md
 /NOTES.md
+
+# Allow
+!/example.env
