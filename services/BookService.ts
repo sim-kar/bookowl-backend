@@ -2,7 +2,7 @@ import https from 'https';
 import IBook from './IBook';
 import Book from '../models/Book';
 import Review from '../models/Review';
-import Constants from '../utils/Constants';
+import CONSTANTS from '../utils/CONSTANTS';
 import Status from '../models/Status';
 import DateUtils from '../utils/DateUtils';
 
@@ -15,8 +15,8 @@ export default class BookService {
    * @param limit the maximum amount of results to get.
    * @returns the HTTP status code and found books.
    */
-  static async searchBooksByTitle(title: string, limit: number = Constants.LIMIT) {
-    return BookService.searchBook(title, Constants.TITLE_FIELD, limit);
+  static async searchBooksByTitle(title: string, limit: number = CONSTANTS.limit) {
+    return BookService.searchBook(title, CONSTANTS.titleField, limit);
   }
 
   /**
@@ -26,8 +26,8 @@ export default class BookService {
    * @param limit the maximum amount of results to get.
    * @returns the HTTP status code and found books.
    */
-  static async searchBooksByAuthor(author: string, limit: number = Constants.LIMIT) {
-    return BookService.searchBook(author, Constants.AUTHOR_FIELD, limit);
+  static async searchBooksByAuthor(author: string, limit: number = CONSTANTS.limit) {
+    return BookService.searchBook(author, CONSTANTS.authorField, limit);
   }
 
   /**
@@ -44,7 +44,7 @@ export default class BookService {
       hostname: 'www.googleapis.com',
       path: `/books/v1/volumes?q=${field}:${encodeURI(keyword)}&maxResults=`
         // google books limits how many results you can get
-        + `${limit > Constants.MAX_ALLOWED_RESULTS ? Constants.MAX_ALLOWED_RESULTS : limit}`
+        + `${limit > CONSTANTS.maxAllowedResults ? CONSTANTS.maxAllowedResults : limit}`
         + '&orderBy=relevance&projection=FULL',
     };
 
@@ -158,7 +158,7 @@ export default class BookService {
    */
   private static getCover(images: any) {
     if (!images) {
-      return Constants.PLACEHOLDER_IMAGE;
+      return CONSTANTS.placeholderImage;
     }
 
     // remove page curl graphic from images from google books API
@@ -187,7 +187,7 @@ export default class BookService {
    * @param limit the maximum amount of results to get.
    * @ returns the HTTP status code and books.
    */
-  static async getHighestRatedBooks(limit: number = Constants.LIMIT) {
+  static async getHighestRatedBooks(limit: number = CONSTANTS.limit) {
     if (limit < 1) {
       return { statusCode: 204, books: {} };
     }
@@ -216,7 +216,7 @@ export default class BookService {
    * @param limit the maximum amount of results to get.
    * @returns the HTTP status code and books.
    */
-  static async getRecentlyUpdatedBooks(status?: number, limit: number = Constants.LIMIT) {
+  static async getRecentlyUpdatedBooks(status?: number, limit: number = CONSTANTS.limit) {
     if (limit < 1) {
       return { statusCode: 204, books: {} };
     }
@@ -251,7 +251,7 @@ export default class BookService {
    * @param limit the maximum amount of results to get.
    * @returns the HTTP status code and books.
    */
-  static async getPopularBooks(status?: number, limit: number = Constants.LIMIT) {
+  static async getPopularBooks(status?: number, limit: number = CONSTANTS.limit) {
     if (limit < 1) {
       return { statusCode: 204, books: {} };
     }
@@ -263,7 +263,7 @@ export default class BookService {
     }
 
     // status updates before this date doesn't affect popular ranking
-    const minDate = DateUtils.getRelativeDate(Constants.POPULAR_DATE_CUTOFF);
+    const minDate = DateUtils.getRelativeDate(CONSTANTS.popularDateCutoff);
 
     const foundBooks = await Status.aggregate([
       { $match: statusFilter },

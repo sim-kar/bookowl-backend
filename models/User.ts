@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import IUser from '../services/IUser';
-import Constants from '../utils/Constants';
+import CONSTANTS from '../utils/CONSTANTS';
 
 const userSchema = new mongoose.Schema<IUser>({
   username: {
@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   email: {
     type: String,
-    match: Constants.EMAIL_REGEX,
+    match: CONSTANTS.emailRegex,
     unique: true,
     required: true,
   },

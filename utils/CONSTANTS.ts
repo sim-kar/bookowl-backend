@@ -1,24 +1,24 @@
-const Constants = {
+const CONSTANTS = {
   // regex used to validate date with format yyyy-mm-dd
-  DATE_REGEX: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/,
+  dateRegex: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/,
   // regex used to validate a book's published date with format yyyy-mm-dd or yyyy-mm or yyyy
   // since the published date is inconsistent in public api
-  PUBLISHED_DATE_REGEX: /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?$/,
+  publishedDateRegex: /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?$/,
   // regex used to validate email according to WHATWG standard:
   // https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-  EMAIL_REGEX: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  emailRegex: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
   // filepath to placeholder image for books without a thumbnail from public API
-  PLACEHOLDER_IMAGE: '../../assets/images/placeholder_cover.jpg',
+  placeholderImage: '../../assets/images/placeholder_cover.jpg',
   // field used to search by title in public api
-  TITLE_FIELD: 'intitle',
+  titleField: 'intitle',
   // field used to search by author in public api
-  AUTHOR_FIELD: 'inauthor',
+  authorField: 'inauthor',
   // maximum number of results to get when searching public api
-  LIMIT: 15,
+  limit: 15,
   // maximum number of allowed results when using public api
-  MAX_ALLOWED_RESULTS: 40,
+  maxAllowedResults: 40,
   // number of days before a book update doesn't affect popular ranking (should be negative)
-  POPULAR_DATE_CUTOFF: -30,
+  popularDateCutoff: -30,
 };
 
-export default Object.freeze(Constants);
+export default Object.freeze(CONSTANTS);

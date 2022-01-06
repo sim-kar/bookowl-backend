@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import IBook from '../services/IBook';
-import Constants from '../utils/Constants';
+import CONSTANTS from '../utils/CONSTANTS';
 
 const bookSchema = new mongoose.Schema<IBook>({
   isbn: {
@@ -13,7 +13,7 @@ const bookSchema = new mongoose.Schema<IBook>({
   authors: { type: [String], required: true },
   cover: { type: String, required: true },
   pages: { type: Number, required: true },
-  published: { type: String, match: Constants.PUBLISHED_DATE_REGEX, required: true },
+  published: { type: String, match: CONSTANTS.publishedDateRegex, required: true },
   publisher: { type: String, required: true },
   language: { type: String, required: true },
   description: { type: String, required: true },
