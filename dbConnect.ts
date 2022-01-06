@@ -1,18 +1,9 @@
-import config from 'config';
 import mongoose from 'mongoose';
-
-const {
-  dbName,
-  host,
-  port: dbPort,
-  username,
-  password,
-} = config.get('bookDB.dbConfig');
+import EnvironmentVariables from './config/EnvironmentVariables';
 
 /** Connect to database. */
 export default async function dbConnect() {
-// `mongodb://${username}:${password}@${host}:${dbPort}/${dbName}`
-  await mongoose.connect(`mongodb://${host}:${dbPort}/${dbName}`)
+  await mongoose.connect(EnvironmentVariables.DATABASE_URL)
     .catch((error) => {
       throw new Error(error);
     });

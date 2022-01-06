@@ -5,6 +5,7 @@ import ReviewRouter from './routes/ReviewRouter';
 import StatusRouter from './routes/StatusRouter';
 import UserRouter from './routes/UserRouter';
 import dbConnect from './dbConnect';
+import EnvironmentVariables from './config/EnvironmentVariables';
 
 const app = express();
 
@@ -13,7 +14,7 @@ await dbConnect();
 
 // MIDDLEWARE
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: EnvironmentVariables.ALLOWED_ORIGIN }));
 
 // ROUTES
 app.use('/api/books', BookRouter);

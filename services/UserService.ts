@@ -1,7 +1,7 @@
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
-import config from 'config';
 import User from '../models/User';
+import EnvironmentVariables from '../config/EnvironmentVariables';
 
 /** Provides access to users in the database. */
 export default class UserService {
@@ -99,7 +99,7 @@ export default class UserService {
       };
     }
 
-    const secret: string = config.get('jwt.secret');
+    const secret: string = EnvironmentVariables.JWT_SECRET;
     const token = jwt.sign(
       {},
       secret,

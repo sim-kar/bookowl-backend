@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import config from 'config';
 import { Request, Response } from 'express';
+import EnvironmentVariables from '../config/EnvironmentVariables';
 
 /**
  * Verifies a JSON Web Token to make sure the request is authorized to use the route.
@@ -11,7 +11,7 @@ import { Request, Response } from 'express';
  */
 export default function verifyToken(req: Request, res: Response, next: Function) {
   const token: string = <string>req.headers['x-access-token'];
-  const secret: string = config.get('jwt.secret');
+  const secret: string = EnvironmentVariables.JWT_SECRET;
   // get the username from either request parameters or body
   const username = req.params.username ? req.params.username : req.body.username;
 
