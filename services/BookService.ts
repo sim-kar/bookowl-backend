@@ -161,6 +161,9 @@ export default class BookService {
       return CONSTANTS.placeholderImage;
     }
 
+    // replace http with https to avoid mixed content warnings
+    images.thumbnail.replace('http', 'https');
+
     // remove page curl graphic from images from google books API
     return images.thumbnail.replace('&edge=curl', '');
   }
