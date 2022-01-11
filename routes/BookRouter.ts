@@ -58,10 +58,11 @@ BookRouter.get('/:isbn', async (req: Request, res: Response) => {
   res.status(payload.statusCode).json(payload.book);
 });
 
+// not currently active
 /** Post a book */
-BookRouter.post('/', async (req: Request, res: Response) => {
-  const payload = await BookService.addBook(req.body);
-  res.status(payload.statusCode).json(payload.message);
-});
+// BookRouter.post('/', async (req: Request, res: Response) => {
+//   const payload = await BookService.addBook(req.body);
+//   res.status(payload.statusCode).json(payload.message);
+// });
 
 export default BookRouter;
