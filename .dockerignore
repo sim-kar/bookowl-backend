@@ -1,0 +1,16 @@
+.git
+.gitignore
+.history
+.idea
+node_modules
+.vscode
+npm-debug.log
+.DS-store
+*.env
+.eslintrc
+http-requests
+REQUIREMENTS.md
+NOTES.md
+
+# Allow
+!example.env
