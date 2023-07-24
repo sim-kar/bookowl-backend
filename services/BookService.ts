@@ -4,7 +4,6 @@ import Book from '../models/Book';
 import Review from '../models/Review';
 import CONSTANTS from '../utils/CONSTANTS';
 import Status from '../models/Status';
-import DateUtils from '../utils/DateUtils';
 
 /** Provides access to books in database, or books from the Google Books API. */
 export default class BookService {
@@ -246,7 +245,8 @@ export default class BookService {
 
   /**
    * Get the most popular books, in descending order. Popularity is decided by how often a book has
-   * been updated (i.e. user status added or changed) within a recent timespan.
+   * been updated (i.e. user status added or changed). Popular books only include the most recently
+   * updated books.
    *
    * @param status only get books with this user status (optional).
    * @param limit the maximum amount of results to get.
@@ -263,12 +263,11 @@ export default class BookService {
       statusFilter = { status };
     }
 
-    // status updates before this date doesn't affect popular ranking
-    const minDate = DateUtils.getRelativeDate(CONSTANTS.popularDateCutoff);
-
     const foundBooks = await Status.aggregate([
       { $match: statusFilter },
-      { $match: { date: { $gte: minDate } } },
+      // sort by most recent; using _id instead of date for better performance since it is indexed
+      { $sort: { _id: -1 } },
+      { $limit: CONSTANTS.popularResultsLimit },
       { $group: { _id: '$book', book: { $first: '$book' }, count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: limit },
